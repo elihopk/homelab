@@ -1,0 +1,17 @@
+galaxy_info:
+  author: Eli Hopkins
+  description: Deploy Reverse Proxy Stack
+  license: ""
+  min_ansible_version: ""
+  platforms: []
+
+  galaxy_tags:
+    - reverse
+    - proxy
+    - traefik
+    - authelia
+    - crowdsec
+
+dependencies:
+  - role: vm
+  - role: docker

@@ -1,0 +1,225 @@
+[http]
+  [http.middlewares]
+    [http.middlewares.https-redirect.redirectScheme]
+      scheme = "https"
+      permanent = true
+      port = 443
+    [http.middlewares.authelia.forwardAuth]
+      address = "http://authelia:9091/api/verify?rd=https://auth.hopk.net"
+      trustForwardHeader = true
+      authResponseHeaders = ["Remote-User", "Remote-Groups"]
+    [http.middlewares.crowdsec.plugin.bouncer]
+      enabled = true
+      logLevel = "debug"
+      crowdSecMode = "live"
+      crowdsecLapiHost = "crowdsec:8080"
+      crowdsecLapiScheme = "http"
+      crowdsecLapiKey = "{{ bouncer_key.stdout }}"
+      crowdsecLapiPath = "/"
+      remediationStatusCode = 401
+    # [http.middlewares.crowdsec.forwardAuth]
+    #   address = "http://bouncer-traefik:8080/api/v1/forwardAuth"
+      trustForwardHeader = true
+    [http.middlewares.chain-authelia.chain]
+      middlewares = ["https-redirect", "crowdsec", "authelia"]
+
+  [http.routers]
+    [http.routers.bazarr]
+      rule = "Host(`bazarr.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "bazarr"
+    [http.routers.bazarr-https]
+      rule = "Host(`bazarr.hopk.net`)"
+      entryPoints = ["https"]
+      service = "bazarr"
+      middlewares = ["chain-authelia"]
+      [http.routers.bazarr-https.tls]
+        certResolver = "le"
+
+    # Radarr
+    [http.routers.radarr]
+      rule = "Host(`radarr.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "radarr"
+    [http.routers.radarr-https]
+      rule = "Host(`radarr.hopk.net`)"
+      entryPoints = ["https"]
+      service = "radarr"
+      middlewares = ["chain-authelia"]
+      [http.routers.radarr-https.tls]
+        certResolver = "le"
+
+    # Sonarr
+    [http.routers.sonarr]
+      rule = "Host(`sonarr.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "sonarr"
+    [http.routers.sonarr-https]
+      rule = "Host(`sonarr.hopk.net`)"
+      entryPoints = ["https"]
+      service = "sonarr"
+      middlewares = ["chain-authelia"]
+      [http.routers.sonarr-https.tls]
+        certResolver = "le"
+
+    # Deluge
+    [http.routers.deluge]
+      rule = "Host(`deluge.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "deluge"
+    [http.routers.deluge-https]
+      rule = "Host(`deluge.hopk.net`)"
+      entryPoints = ["https"]
+      service = "deluge"
+      middlewares = ["chain-authelia"]
+      [http.routers.deluge-https.tls]
+        certResolver = "le"
+
+    # Prowlarr
+    [http.routers.prowlarr]
+      rule = "Host(`prowlarr.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "prowlarr"
+    [http.routers.prowlarr-https]
+      rule = "Host(`prowlarr.hopk.net`)"
+      entryPoints = ["https"]
+      service = "prowlarr"
+      middlewares = ["chain-authelia"]
+      [http.routers.prowlarr-https.tls]
+        certResolver = "le"
+
+    # Plex
+    [http.routers.plex]
+      rule = "Host(`plex.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "plex"
+    [http.routers.plex-https]
+      rule = "Host(`plex.hopk.net`)"
+      entryPoints = ["https"]
+      service = "plex"
+      middlewares = ["crowdsec"]
+      [http.routers.plex-https.tls]
+        certResolver = "le"
+
+    # Overseerr
+    [http.routers.overseerr]
+      rule = "Host(`request.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "overseerr"
+    [http.routers.overseerr-https]
+      rule = "Host(`request.hopk.net`)"
+      entryPoints = ["https"]
+      service = "overseerr"
+      middlewares = ["crowdsec"]
+      [http.routers.overseerr-https.tls]
+        certResolver = "le"
+
+    # Tautulli
+    [http.routers.tautulli]
+      rule = "Host(`tautulli.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "tautulli"
+    [http.routers.tautulli-https]
+      rule = "Host(`tautulli.hopk.net`)"
+      entryPoints = ["https"]
+      service = "tautulli"
+      middlewares = ["chain-authelia"]
+      [http.routers.tautulli-https.tls]
+        certResolver = "le"
+
+    # SABnzbd
+    [http.routers.sabnzbd]
+      rule = "Host(`sabnzbd.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "sabnzbd"
+    [http.routers.sabnzbd-https]
+      rule = "Host(`sabnzbd.hopk.net`)"
+      entryPoints = ["https"]
+      service = "sabnzbd"
+      middlewares = ["chain-authelia"]
+      [http.routers.sabnzbd-https.tls]
+        certResolver = "le"
+
+    # VaultWarden
+    [http.routers.vw]
+      rule = "Host(`vw.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "vw"
+    [http.routers.vw-https]
+      rule = "Host(`vw.hopk.net`)"
+      entryPoints = ["https"]
+      service = "vw"
+      middlewares = ["chain-authelia"]
+      [http.routers.vw-https.tls]
+        certResolver = "le"
+
+    # Proxmox
+    [http.routers.virt]
+      rule = "Host(`virt.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "virt"
+    [http.routers.virt-https]
+      rule = "Host(`virt.hopk.net`)"
+      entryPoints = ["https"]
+      service = "virt"
+      middlewares = ["chain-authelia"]
+      [http.routers.virt-https.tls]
+        certResolver = "le"
+      
+
+  [http.services]
+    # These use default Docker internal ports
+    [http.services.bazarr.loadBalancer]
+      [[http.services.bazarr.loadBalancer.servers]]
+        url = "http://{{ hostvars['media1'].ansible_host }}:6767"
+
+    [http.services.radarr.loadBalancer]
+      [[http.services.radarr.loadBalancer.servers]]
+        url = "http://{{ hostvars['media1'].ansible_host }}:7878"
+
+    [http.services.sonarr.loadBalancer]
+      [[http.services.sonarr.loadBalancer.servers]]
+        url = "http://{{ hostvars['media1'].ansible_host }}:8989"
+
+    [http.services.deluge.loadBalancer]
+      [[http.services.deluge.loadBalancer.servers]]
+        url = "http://{{ hostvars['media1'].ansible_host }}:8112"
+
+    [http.services.prowlarr.loadBalancer]
+      [[http.services.prowlarr.loadBalancer.servers]]
+        url = "http://{{ hostvars['media1'].ansible_host }}:9696"
+
+    [http.services.plex.loadBalancer]
+      [[http.services.plex.loadBalancer.servers]]
+        url = "http://{{ hostvars['media1'].ansible_host }}:32400"
+
+    [http.services.overseerr.loadBalancer]
+      [[http.services.overseerr.loadBalancer.servers]]
+        url = "http://{{ hostvars['media1'].ansible_host }}:5055"
+
+    [http.services.tautulli.loadBalancer]
+      [[http.services.tautulli.loadBalancer.servers]]
+        url = "http://{{ hostvars['media1'].ansible_host }}:8181"
+
+    [http.services.sabnzbd.loadBalancer]
+      [[http.services.sabnzbd.loadBalancer.servers]]
+        url = "http://{{ hostvars['media1'].ansible_host }}:8080"
+
+    [http.services.vw.loadBalancer]
+      [[http.services.vw.loadBalancer.servers]]
+        url = "http://{{ hostvars['vaultwarden'].ansible_host }}:8000"
+
+    [http.services.virt.loadBalancer]
+      [[http.services.virt.loadBalancer.servers]]
+        url = "https://{{ hostvars['virt1'].ansible_host }}:8006"

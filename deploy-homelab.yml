@@ -1,0 +1,306 @@
+# HopkNET Deploy Homelab
+# This playbook configures all proxmox instances and then deploys and configures all of their VMs
+# The proxmox installs must be done manually and networking must be functional prior to running this
+
+# WARNING: This playbook is NOT idempotent. Do not run this on anything but fresh installs of Proxmox
+
+# May be worth migrating the proxmox stuff to Terraform cause this is super janky
+- name: Configure Proxmox Servers
+  hosts: proxmox_servers
+  vars_files:
+    - vars/secrets.yml
+    - vars/config_vars.yml
+  tasks:
+
+    - name: Disable Enterprise Repo
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/pve-enterprise.list
+        state: absent
+    - name: Disable Ceph Enterprise Repo
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/ceph.list
+        state: absent
+    - name: Add No-Subscription Repo
+      ansible.builtin.apt_repository:
+        repo: deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
+        state: present
+    - name: Add Ceph No-Subscription Repo
+      ansible.builtin.apt_repository:
+        repo: deb http://download.proxmox.com/debian/ceph-squid bookworm no-subscription
+        state: present
+
+    - name: Update All Packages to their Latest Version
+      ansible.builtin.apt:
+        upgrade: dist
+
+    - name: Install pip
+      ansible.builtin.apt:
+        name:
+          - pip
+        state: present
+
+    - name: Ensure proxmoxer is installed
+      ansible.builtin.pip:
+        name:
+          - proxmoxer
+        state: present
+        break_system_packages: true
+
+    - name: Perform Cluster Actions
+      when: groups['proxmox_servers'] | length > 1
+      block:
+        - name: Create Cluster
+          community.proxmox.proxmox_cluster:
+            state: present
+            api_host: "{{ ansible_host }}"
+            api_user: root@pam
+            api_password: "{{ proxmox_servers.proxmox_password }}"
+            validate_certs: false
+            link0: "{{ hostvars[groups['proxmox_servers'][0]].ansible_host }}"
+            cluster_name: "hopknet"
+          when: inventory_hostname == "virt1"
+
+        - name: Wait for Cluster to Settle
+          ansible.builtin.pause:
+            seconds: 20
+
+        - name: Get Cluster Join Info
+          community.proxmox.proxmox_cluster_join_info:
+            api_host: "{{ hostvars['virt1'].ansible_host }}"
+            api_user: root@pam
+            api_password: "{{ proxmox_servers.proxmox_password }}"
+            validate_certs: false
+          register: proxmox_cluster_join
+          when: inventory_hostname != "virt1"
+
+        - name: Join Cluster on virt2
+          community.proxmox.proxmox_cluster:
+            state: present
+            api_host: "{{ ansible_host }}"
+            api_user: root@pam
+            api_password: "{{ proxmox_servers.proxmox_password }}"
+            validate_certs: false
+            master_ip: "{{ hostvars[groups['proxmox_servers'][0]].ansible_host }}"
+            fingerprint: "{{ proxmox_cluster_join.cluster_join.nodelist[0].pve_fp }}"
+            cluster_name: "hopk-net"
+          when: inventory_hostname == "virt2"
+
+        - name: Wait for Cluster to Settle Again
+          ansible.builtin.pause:
+            seconds: 20
+
+        - name: Join Cluster on virt3
+          community.proxmox.proxmox_cluster:
+            state: present
+            api_host: "{{ ansible_host }}"
+            api_user: root@pam
+            api_password: "{{ proxmox_servers.proxmox_password }}"
+            validate_certs: false
+            master_ip: "{{ hostvars[groups['proxmox_servers'][0]].ansible_host }}"
+            fingerprint: "{{ proxmox_cluster_join.cluster_join.nodelist[0].pve_fp }}"
+            cluster_name: "hopk-net"
+          when: inventory_hostname == "virt3"
+
+    - name: Download debian-ci Image
+      ansible.builtin.get_url:
+        url: https://cdimage.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2
+        dest: /root/
+        mode: "666"
+
+    - name: Create debian-ci VMs
+      community.proxmox.proxmox_kvm:
+        api_host: "{{ ansible_host }}"
+        api_user: root@pam
+        api_password: "{{ proxmox_servers.proxmox_password }}"
+        validate_certs: false
+        name: debian-ci
+        vmid: "{{ vmid }}"
+        state: present
+        node: "{{ inventory_hostname }}"
+        memory: 2048
+        net:
+          net0: "virtio,bridge=vmbr0"
+        scsihw: virtio-scsi-single
+        ide:
+          ide2: "local-btrfs:cloudinit"
+        boot: "order=scsi0"
+        serial:
+          serial0: socket
+        vga: std
+
+    - name: Wait for debian-ci VMs to Create
+      ansible.builtin.pause:
+        seconds: 10
+
+    - name: Import debian-ci Image
+      community.proxmox.proxmox_disk:
+        api_host: "{{ ansible_host }}"
+        api_user: root@pam
+        api_password: "{{ proxmox_servers.proxmox_password }}"
+        validate_certs: false
+        vmid: "{{ vmid }}"
+        disk: scsi0
+        format: raw
+        storage: local-btrfs
+        import_from: "/root/debian-12-generic-amd64.qcow2"
+        state: present
+
+    - name: Wait for debian-ci Images to Import
+      ansible.builtin.pause:
+        seconds: 10
+
+    - name: Change debian-ci VM to Template
+      community.proxmox.proxmox_kvm:
+        api_host: "{{ ansible_host }}"
+        api_user: root@pam
+        api_password: "{{ proxmox_servers.proxmox_password }}"
+        validate_certs: false
+        vmid: "{{ vmid }}"
+        state: template
+        node: "{{ inventory_hostname }}"
+
+    - name: Wait for debian-ci Template Conversion
+      ansible.builtin.pause:
+        seconds: 10
+
+    - name: Create VMs
+      community.proxmox.proxmox_kvm:
+        api_host: "{{ ansible_host }}"
+        api_user: root@pam
+        api_password: "{{ proxmox_servers.proxmox_password }}"
+        validate_certs: false
+        node: "{{ inventory_hostname }}"
+        name: "{{ item }}"
+        vmid: "{{ vmid }}"
+        newid: "{{ hostvars[item].vmid }}"
+        clone: debian-ci
+        format: unspecified
+        full: false
+      when: hostvars[item].proxmox_host == inventory_hostname
+      loop: "{{ groups['vms'] }}"
+
+    - name: Wait for VMs to Create
+      ansible.builtin.pause:
+        seconds: 10
+
+    - name: Reconfigure VMs
+      community.proxmox.proxmox_kvm:
+        api_host: "{{ ansible_host }}"
+        api_user: root@pam
+        api_password: "{{ proxmox_servers.proxmox_password }}"
+        validate_certs: false
+        vmid: "{{ hostvars[item].vmid }}"
+        node: "{{ inventory_hostname }}"
+        ciuser: "{{ hostvars[item].ansible_user }}"
+        cipassword: "{{ vars[item].ansible_password }}"
+        sshkeys: "{{ ssh_public_key }}"
+        searchdomains: "hopk.net"
+        nameservers:
+          - "8.8.8.8"
+          - "8.8.4.4"
+        ipconfig:
+          ipconfig0: "ip={{ hostvars[item].ansible_host }}/24,gw={{ default_gateway }}"
+        autostart: true
+        memory: "{{ hostvars[item].proxmox_memory | default(2048) }}"
+        cores: "{{ hostvars[item].proxmox_cores | default(2) }}"
+        scsihw: virtio-scsi-pci
+        update: true
+        update_unsafe: true
+      when: hostvars[item].proxmox_host == inventory_hostname
+      loop: "{{ groups['vms'] }}"
+
+    - name: Wait for VMs to Reconfigure
+      ansible.builtin.pause:
+        seconds: 10
+
+    - name: Resize VMs
+      community.proxmox.proxmox_disk:
+        api_host: "{{ ansible_host }}"
+        api_user: root@pam
+        api_password: "{{ proxmox_servers.proxmox_password }}"
+        validate_certs: false
+        vmid: "{{ hostvars[item].vmid }}"
+        disk: scsi0
+        size: "{{ hostvars[item].proxmox_disk_size | default(10) }}G"
+        state: resized
+      when: hostvars[item].proxmox_host == inventory_hostname
+      loop: "{{ groups['vms'] }}"
+
+    - name: Wait for VMs to Resize
+      ansible.builtin.pause:
+        seconds: 10
+
+    - name: Start VMs
+      community.proxmox.proxmox_kvm:
+        api_host: "{{ ansible_host }}"
+        api_user: root@pam
+        api_password: "{{ proxmox_servers.proxmox_password }}"
+        validate_certs: false
+        vmid: "{{ hostvars[item].vmid }}"
+        state: started
+      when: hostvars[item].proxmox_host == inventory_hostname
+      loop: "{{ groups['vms'] }}"
+
+    - name: Wait for all VMs to be reachable via SSH
+      ansible.builtin.wait_for_connection:
+        delay: 5
+        timeout: 300
+      delegate_to: "{{ item }}"
+      loop: "{{ groups['vms'] }}"
+
+- name: Configure Media Server
+  hosts: media_servers
+  vars_files:
+    - vars/secrets.yml
+    - vars/config_vars.yml
+  roles:
+    - media
+
+- name: Configure Reverse Proxy
+  hosts: proxy
+  vars_files:
+    - vars/secrets.yml
+    - vars/config_vars.yml
+  roles:
+    - proxy
+
+- name: Configure Database Servers
+  hosts: db_servers
+  vars_files:
+    - vars/secrets.yml
+  roles:
+    - db
+
+- name: Configure VaultWarden
+  hosts: vaultwarden
+  vars_files:
+    - vars/secrets.yml
+  roles:
+    - vaultwarden
+
+- name: Configure Backup Server
+  hosts: backup
+  vars_files:
+    - vars/secrets.yml
+    - vars/config_vars.yml
+  roles:
+    - backup
+
+- name: Install Backup Public SSH Key on VMs
+  hosts: vms
+  become: true
+  tasks:
+    - name: Add Public Key to authorized_keys
+      ansible.posix.authorized_key:
+        user: "{{ ansible_user }}"
+        state: present
+        key: "{{ lookup('file', 'roles/backup/files/id_rsa.pub') }}"
+
+- name: Start Docker Compose Stacks
+  hosts: docker
+  become: true
+  tasks:
+    - name: Start Docker Compose Stacks in all VMs
+      community.docker.docker_compose_v2:
+        project_src: /home/{{ ansible_user }}
+        state: present

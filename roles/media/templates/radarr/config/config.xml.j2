@@ -1,0 +1,21 @@
+<Config>
+  <BindAddress>*</BindAddress>
+  <Port>7878</Port>
+  <SslPort>9898</SslPort>
+  <EnableSsl>False</EnableSsl>
+  <LaunchBrowser>True</LaunchBrowser>
+  <ApiKey>{{ radarr_api_key }}</ApiKey>
+  <AuthenticationMethod>Forms</AuthenticationMethod>
+  <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>
+  <Branch>master</Branch>
+  <LogLevel>debug</LogLevel>
+  <SslCertPath></SslCertPath>
+  <SslCertPassword></SslCertPassword>
+  <UrlBase></UrlBase>
+  <InstanceName>Radarr</InstanceName>
+  <UpdateMechanism>Docker</UpdateMechanism>
+  <PostgresUser>radarr</PostgresUser>
+  <PostgresPassword>{{ postgres_dbs['radarr-main'].password }}</PostgresPassword>
+  <PostgresPort>5432</PostgresPort>
+  <PostgresHost>{{ hostvars['db1'].ansible_host }}</PostgresHost>
+</Config>

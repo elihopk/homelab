@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Eli Hopkins
+  description: Bootstrap PostgreSQL Databases
+  license: ""
+  min_ansible_version: ""
+  platforms: []
+
+  galaxy_tags:
+    - database
+    - postgresql
+    - db
+
+dependencies:
+  - role: vm

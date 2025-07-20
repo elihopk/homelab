@@ -1,0 +1,117 @@
+- name: Become Block
+  become: true
+  block:
+    - name: Install psycopg
+      ansible.builtin.apt:
+        name:
+          - python3-psycopg2
+        state: present
+
+    - name: Wipe Crowdsec
+      ansible.builtin.file:
+        path: "/home/{{ ansible_user }}/crowdsec"
+        state: absent
+
+    - name: Drop Crowdsec DB
+      community.postgresql.postgresql_db:
+        name: crowdsec
+        state: absent
+        login_host: "{{ hostvars['db1'].ansible_host }}"
+        login_user: postgres
+        login_password: "{{ postgres_password }}"
+      ignore_errors: true
+      # noqa ignore-errors
+
+    - name: Create Crowdsec DB
+      community.postgresql.postgresql_db:
+        name: crowdsec
+        state: present
+        owner: crowdsec
+        login_host: "{{ hostvars['db1'].ansible_host }}"
+        login_user: postgres
+        login_password: "{{ postgres_password }}"
+      ignore_errors: true
+
+    - name: Create Directory Structure
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - /home/{{ ansible_user }}/authelia/config
+        - /home/{{ ansible_user }}/authelia/secrets
+        - /home/{{ ansible_user }}/crowdsec/config
+        - /home/{{ ansible_user }}/crowdsec/data
+        - /home/{{ ansible_user }}/traefik
+
+    - name: Render Docker Compose
+      ansible.builtin.template:
+        src: "docker-compose.yml.j2"
+        dest: "/home/{{ ansible_user }}/docker-compose.yml"
+        force: true
+        mode: "0664"
+
+    - name: Generate Crowdsec Defaults
+      community.docker.docker_compose_v2:
+        services:
+          - crowdsec
+        project_src: /home/{{ ansible_user }}
+        state: present
+
+    - name: Wait 10 Seconds to be sure crowdsec Defaults Populate
+      ansible.builtin.pause:
+        seconds: 10
+
+    - name: Add CrowdSec bouncer and capture API key
+      community.docker.docker_container_exec:
+        container: crowdsec
+        command: cscli bouncers add traefikBouncer -o raw
+      register: bouncer_key
+
+    - name: Install Local Whitelist
+      community.docker.docker_container_exec:
+        container: crowdsec
+        command: cscli parsers install crowdsecurity/whitelists
+
+    - name: Bring Crowdsec Down
+      community.docker.docker_compose_v2:
+        services:
+          - crowdsec
+        project_src: /home/{{ ansible_user }}
+        state: absent
+
+    - name: Copy acquis.yaml
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "/home/{{ ansible_user }}/{{ item }}"
+        mode: "0664"
+      loop:
+        - "crowdsec/config/acquis.yaml"
+
+    - name: Render Config Templates
+      ansible.builtin.template:
+        src: "{{ item }}"
+        dest: "{{ ('/home/' + ansible_user + '/' + item) | regex_replace('\\.j2', '') }}"
+        force: true
+        mode: "0664"
+      loop:
+        - authelia/config/configuration.yml.j2
+        - authelia/config/users_database.yml.j2
+        - authelia/secrets/JWT_SECRET.j2
+        - authelia/secrets/POSTGRES_PASSWORD.j2
+        - authelia/secrets/SESSION_SECRET.j2
+        - authelia/secrets/STORAGE_ENCRYPTION_KEY.j2
+        - crowdsec/config/config.yaml.j2
+        - crowdsec/config/online_api_credentials.yaml.j2
+        - traefik/dyn.toml.j2
+        - traefik/traefik.toml.j2
+
+    - name: Debug API key
+      ansible.builtin.debug:
+        msg: "CrowdSec API key is {{ bouncer_key.stdout }}"
+
+    - name: Replace API key in bouncer config
+      ansible.builtin.replace:
+        path: "/home/{{ ansible_user }}/docker-compose.yml"
+        regexp: "BOUNCER_KEY_TRAEFIK=ph"
+        replace: "BOUNCER_KEY_TRAEFIK={{ bouncer_key.stdout }}"

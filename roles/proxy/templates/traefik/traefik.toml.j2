@@ -1,0 +1,31 @@
+[api]
+#  insecure = true
+  dashboard = true
+[pilot]
+  token = "{{ traefik_pilot_token }}"
+[log]
+  filePath = "/var/log/traefik/traefik.log"
+[accessLog]
+  filePath = "/var/log/traefik/access.log"
+[providers]
+  [providers.docker]
+    exposedByDefault = false
+  [providers.file]
+    filename = "/etc/traefik/dyn.toml"
+[entryPoints]
+  [entryPoints.http]
+    address = ":80"
+  [entryPoints.https]
+    address = ":443"
+[certificatesResolvers.le.acme]
+  email = "{{ owner_email }}"
+  storage = "/certs/acme.json"
+  caServer = "https://acme-v02.api.letsencrypt.org/directory"
+  [certificatesResolvers.le.acme.httpChallenge]
+    entryPoint = "http"
+[experimental.plugins]
+  [experimental.plugins.bouncer]
+    moduleName = "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
+    version = "v1.4.4"
+[serversTransport]
+  insecureSkipVerify = true

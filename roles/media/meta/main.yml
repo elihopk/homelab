@@ -1,0 +1,20 @@
+galaxy_info:
+  author: Eli Hopkins
+  description: Deploy Media Server Stack
+  license: ""
+  min_ansible_version: ""
+  platforms: []
+
+  galaxy_tags:
+    - radarr
+    - sonarr
+    - bazarr
+    - deluge
+    - sabnzbd
+    - jellyseerr
+    - prowlarr
+    - tautulli
+
+dependencies:
+  - role: vm
+  - role: docker

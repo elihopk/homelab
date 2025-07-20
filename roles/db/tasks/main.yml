@@ -1,0 +1,56 @@
+- name: Become Block
+  become: true
+  block:
+    - name: Install Packages
+      ansible.builtin.apt:
+        name:
+          - postgresql
+          - postgresql-client
+          - pgagent
+          - acl
+          - python3-psycopg2
+        state: present
+
+    - name: Copy Postgresql Config
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "/etc/postgresql/15/main/{{ item }}"
+        mode: "0664"
+      loop:
+        - "postgresql.conf"
+        - "pg_hba.conf"
+
+    - name: Restart Postgresql
+      ansible.builtin.systemd_service:
+        name: "postgresql"
+        state: restarted
+
+- name: Postgres Block
+  become: true
+  become_user: postgres
+  block:
+    - name: Ensure Roles Exist with Proper Passwords
+      community.postgresql.postgresql_user:
+        name: "{{ item.value.user }}"
+        password: "{{ item.value.password }}"
+        state: present
+      loop: "{{ postgres_dbs | dict2items }}"
+
+    - name: Ensure Databases Exist and Set Owner
+      community.postgresql.postgresql_db:
+        name: "{{ item.key }}"
+        owner: "{{ item.value.user }}"
+        state: present
+      loop: "{{ postgres_dbs | dict2items }}"
+
+    - name: Ensure pgagent Extension Exists in Postgres DB
+      community.postgresql.postgresql_ext:
+        name: pgagent
+        login_db: postgres
+        state: present
+
+    - name: Update postgres User Password
+      community.postgresql.postgresql_user:
+        name: postgres
+        password: "{{ postgres_password }}"
+        state: present

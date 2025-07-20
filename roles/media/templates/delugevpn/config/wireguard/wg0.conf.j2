@@ -1,0 +1,15 @@
+# TorGuard WireGuard Config
+[Interface]
+PostUp = '/root/wireguardup.sh'
+PostDown = '/root/wireguarddown.sh'
+PrivateKey = {{ deluge_wireguard_private_key }}
+ListenPort = 53914
+MTU = 1390
+DNS = 1.1.1.1
+Address = {{ deluge_wireguard_address }}
+
+[Peer]
+PublicKey = tB3l05tVDZqByNo5WPkkpbzHqQ4ISvEvuMy2PxYQl2w=
+AllowedIPs = 0.0.0.0/0
+Endpoint = {{ deluge_wireguard_endpoint }}
+PersistentKeepalive = 25

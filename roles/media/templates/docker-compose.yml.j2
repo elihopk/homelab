@@ -1,0 +1,158 @@
+services:
+  bazarr:
+    image: ghcr.io/linuxserver/bazarr
+    container_name: bazarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    depends_on:
+      - "radarr"
+      - "sonarr"
+    ports:
+      - 6767:6767
+    volumes:
+      - ./bazarr/config:/config
+      - ./library/Movies:/movies
+      - ./library/TV:/tv
+    restart: unless-stopped
+  radarr:
+    image: ghcr.io/linuxserver/radarr
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    depends_on:
+      - "deluge"
+      - "prowlarr"
+      - "plex"
+    ports:
+      - 7878:7878
+    volumes:
+      - ./radarr/config:/config
+      - ./library/Movies:/movies
+      - ./downloads/torrent:/data
+      - ./downloads/nzb/complete:/downloads
+      - ./downloads/nzb/incomplete:/incomplete-downloads
+    restart: unless-stopped
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    depends_on:
+      - "deluge"
+      - "prowlarr"
+      - "plex"
+    ports:
+      - 8989:8989
+    volumes:
+      - ./sonarr/config:/config
+      - ./library/TV:/tv
+      - ./downloads/torrent:/data
+      - ./downloads/nzb/complete:/downloads
+      - ./downloads/nzb/incomplete:/incomplete-downloads
+    restart: unless-stopped
+  deluge:
+    image: binhex/arch-delugevpn
+    container_name: deluge
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    privileged: true
+    environment:
+      - VPN_ENABLED=yes
+      - VPN_PROV=custom
+      - VPN_CLIENT=wireguard
+      - ENABLE_PRIVOXY=yes
+      - LAN_NETWORK=10.0.1.0/24
+      - DEBUG=false
+      - NAME_SERVERS=8.8.8.8,8.8.4.4
+      - PGID=1000
+      - PUID=1000
+    ports:
+      - 8112:8112
+    volumes:
+      - ./downloads/torrent:/data
+      - ./delugevpn/config:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+  prowlarr:
+    container_name: prowlarr
+    image: lscr.io/linuxserver/prowlarr:develop
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    ports:
+      - 9696:9696
+    volumes:
+      - ./prowlarr:/config
+    restart: unless-stopped
+  plex:
+    container_name: plex
+    image: plexinc/pms-docker
+    restart: unless-stopped
+    devices:
+      - /dev/dri:/dev/dri
+    ports:
+      - 32400:32400
+    environment:
+      - TZ=America/New_York
+      - ADVERTISE_IP=https://plex.hopk.net/
+    hostname: Plex-HOPKNET
+    volumes:
+      - ./plex/config:/config
+      - ./plex/transcode:/transcode
+      - ./library:/library
+  jellyseerr:
+    image: fallenbagel/jellyseerr
+    container_name: jellyseerr
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=America/New_York
+      - DB_TYPE=postgres
+      - DB_HOST={{ hostvars['db1'].ansible_host }}
+      - DB_USER=jellyseerr
+      - DB_PASS={{ postgres_dbs.jellyseerr.password }}
+    ports:
+      - 5055:5055
+    volumes:
+      - ./jellyseerr:/app/config
+    restart: unless-stopped
+  tautulli:
+    image: ghcr.io/linuxserver/tautulli
+    container_name: tautulli
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    depends_on:
+      - "plex"
+    ports:
+      - 8181:8181
+    volumes:
+      - ./tautulli/config:/config
+    restart: unless-stopped
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    ports:
+      - 8080:8080
+    volumes:
+      - ./sabnzbd/config:/config
+      - ./downloads/nzb/complete:/downloads
+      - ./downloads/nzb/incomplete:/incomplete-downloads
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped

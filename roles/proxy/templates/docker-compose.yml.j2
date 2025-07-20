@@ -1,0 +1,82 @@
+services:
+  authelia:
+    image: authelia/authelia
+    container_name: authelia
+    volumes:
+      - ./authelia/config:/config
+      - ./authelia/secrets:/secrets
+      - autheliaLogs:/var/log/authelia
+    depends_on:
+      - "redis"
+    restart: unless-stopped
+    environment:
+      - TZ=America/New_York
+      - AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET_FILE=/secrets/JWT_SECRET
+      - AUTHELIA_SESSION_SECRET_FILE=/secrets/SESSION_SECRET
+      - AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE=/secrets/STORAGE_ENCRYPTION_KEY
+      - AUTHELIA_STORAGE_POSTGRES_PASSWORD_FILE=/secrets/POSTGRES_PASSWORD
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.authelia.rule=Host(`auth.hopk.net`)"
+      - "traefik.http.routers.authelia.entrypoints=https"
+      - "traefik.http.routers.authelia.tls=true"
+      - "traefik.http.routers.authelia.tls.certresolver=le"
+      - "traefik.http.middlewares.cors.headers.customResponseHeaders.Access-Control-Allow-Origin=https://hopk.net/"
+      - "traefik.http.middlewares.cors.headers.customResponseHeaders.Access-Control-Allow-Credentials=true"
+      - "traefik.http.routers.authelia.middlewares=crowdsec@file, cors"
+  traefik:
+    image: traefik
+    container_name: traefik
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/certs:/certs
+      - ./traefik/traefik.toml:/etc/traefik/traefik.toml
+      - ./traefik/dyn.toml:/etc/traefik/dyn.toml
+      - traefikLogs:/var/log/traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.hopk.net`)"
+      - "traefik.http.routers.traefik.entrypoints=https"
+      - "traefik.http.routers.traefik.tls=true"
+      - "traefik.http.routers.traefik.tls.certresolver=le"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.middlewares=chain-authelia@file"
+  redis:
+    image: redis:alpine
+    container_name: redis
+    volumes:
+      - ./redis:/data
+    restart: unless-stopped
+    environment:
+      - TZ=America/New_York
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    container_name: crowdsec
+    restart: unless-stopped
+    volumes:
+      - ./crowdsec/config:/etc/crowdsec
+      - ./crowdsec/data:/var/lib/crowdsec/data
+      - /var/log/auth.log:/logs/auth.log:ro
+      - /var/log/syslog:/logs/syslog:ro
+      - traefikLogs:/logs/traefik
+      - autheliaLogs:/logs/authelia
+    environment:
+      - COLLECTIONS=LePresidente/authelia crowdsecurity/traefik crowdsecurity/linux
+      - BOUNCER_KEY_TRAEFIK=ph
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_POLL_INTERVAL=86400
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_INCLUDE_STOPPED=true
+    restart: unless-stopped
+volumes:
+  traefikLogs:
+  autheliaLogs:

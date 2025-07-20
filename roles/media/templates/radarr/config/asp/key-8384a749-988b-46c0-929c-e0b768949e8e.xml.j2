@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<key id="8384a749-988b-46c0-929c-e0b768949e8e" version="1">
+  <creationDate>2025-07-10T00:21:01.1543356Z</creationDate>
+  <activationDate>2025-07-10T00:21:01.1520608Z</activationDate>
+  <expirationDate>2025-10-08T00:21:01.1520608Z</expirationDate>
+  <descriptor deserializerType="Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
+    <descriptor>
+      <encryption algorithm="AES_256_CBC" />
+      <validation algorithm="HMACSHA256" />
+      <masterKey p4:requiresEncryption="true" xmlns:p4="http://schemas.asp.net/2015/03/dataProtection">
+        <!-- Warning: the key below is in an unencrypted form. -->
+        <value>{{ radarr_master_key }}</value>
+      </masterKey>
+    </descriptor>
+  </descriptor>
+</key>

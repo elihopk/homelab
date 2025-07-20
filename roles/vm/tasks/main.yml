@@ -1,0 +1,8 @@
+- name: Become Block
+  become: true
+  block:
+    - name: Install rsync
+      ansible.builtin.apt:
+        name:
+          - rsync
+        state: present

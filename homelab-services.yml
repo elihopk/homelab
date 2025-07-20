@@ -1,0 +1,65 @@
+- name: Stop Docker Compose Stacks
+  hosts: docker
+  become: true
+  tasks:
+    - name: Stop Docker Compose Stacks in all VMs
+      community.docker.docker_compose_v2:
+        project_src: /home/{{ ansible_user }}
+        state: absent
+
+- name: Configure Media Server
+  hosts: media_servers
+  vars_files:
+    - vars/secrets.yml
+    - vars/config_vars.yml
+  roles:
+    - media
+
+- name: Configure Reverse Proxy
+  hosts: proxy
+  vars_files:
+    - vars/secrets.yml
+    - vars/config_vars.yml
+  roles:
+    - proxy
+
+- name: Configure Database Servers
+  hosts: db_servers
+  vars_files:
+    - vars/secrets.yml
+  roles:
+    - db
+
+- name: Configure VaultWarden
+  hosts: vaultwarden
+  vars_files:
+    - vars/secrets.yml
+  roles:
+    - vaultwarden
+
+- name: Configure Backup Server
+  hosts: backup
+  vars_files:
+    - vars/secrets.yml
+    - vars/config_vars.yml
+  roles:
+    - backup
+
+- name: Install Backup Public SSH Key on VMs
+  hosts: vms
+  become: true
+  tasks:
+    - name: Add Public Key to authorized_keys
+      ansible.posix.authorized_key:
+        user: "{{ ansible_user }}"
+        state: present
+        key: "{{ lookup('file', 'roles/backup/files/id_rsa.pub') }}"
+
+- name: Start Docker Compose Stacks
+  hosts: docker
+  become: true
+  tasks:
+    - name: Start Docker Compose Stacks in all VMs
+      community.docker.docker_compose_v2:
+        project_src: /home/{{ ansible_user }}
+        state: present

@@ -1,0 +1,15 @@
+owner_username: "elihopk44"
+owner_full_name: "Eli Hopkins"
+owner_email: "elihopk44@gmail.com"
+
+crowdsec_allowlist: "10.0.1.0/24 10.0.2.0/24 10.0.4.0/24 162.0.177.14"
+
+default_gateway: "10.0.1.254"
+
+deluge_wireguard_address: "10.13.37.41/24"
+deluge_wireguard_endpoint: "146.70.137.146:1443"
+deluge_listen_interface: "10.13.37.41"
+
+backup_borg_repo: "ssh://u456419@u456419.your-storagebox.de:23/./hopknet/borg"
+
+ssh_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEKJxTN4W7Jxg+UTpu/6MujTQNKFZnw/PxY458Cdz+4D ehopkins@ewh-Desktop"

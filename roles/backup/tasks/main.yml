@@ -1,0 +1,91 @@
+- name: Become Block
+  become: true
+  block:
+    - name: Install borg + borgmatic Build Dependencies
+      ansible.builtin.apt:
+        name:
+          - python3
+          - python3-dev
+          - python3-pip
+          - python3-venv
+          - python3-virtualenv
+          - libacl1-dev
+          - libssl-dev
+          - liblz4-dev
+          - libzstd-dev
+          - libxxhash-dev
+          - build-essential
+          - pkg-config
+        state: present
+
+    - name: Ensure proxmoxer is installed
+      ansible.builtin.pip:
+        name:
+          - pipx
+        state: present
+        break_system_packages: true
+
+    - name: Build borgbackup as root
+      community.general.pipx:
+        name: borgbackup
+        state: present
+
+    - name: Build borgmatic as root
+      community.general.pipx:
+        name: borgmatic
+        state: present
+
+    - name: Build borgbackup
+      community.general.pipx:
+        name: borgbackup
+        state: present
+      become: false
+
+    - name: Build borgmatic
+      community.general.pipx:
+        name: borgmatic
+        state: present
+      become: false
+
+    - name: Create Config Directory
+      ansible.builtin.file:
+        path: "/etc/borgmatic"
+        state: directory
+        mode: "0755"
+
+    - name: Render Config Template
+      ansible.builtin.template:
+        src: config.yaml.j2
+        dest: /etc/borgmatic/config.yaml
+        mode: "0664"
+
+    - name: Copy SSH Keys
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "/home/{{ ansible_user }}/.ssh/{{ item }}"
+        mode: "0600"
+      loop:
+        - "id_rsa"
+        - "id_rsa.pub"
+
+    - name: Download borgmatic Service
+      ansible.builtin.get_url:
+        url: https://projects.torsion.org/borgmatic-collective/borgmatic/raw/branch/main/sample/systemd/borgmatic.service
+        dest: /etc/systemd/system/borgmatic.service
+        mode: "0644"
+        owner: root
+        group: root
+
+    - name: Download borgmatic Timer
+      ansible.builtin.get_url:
+        url: https://projects.torsion.org/borgmatic-collective/borgmatic/raw/branch/main/sample/systemd/borgmatic.timer
+        dest: /etc/systemd/system/borgmatic.timer
+        mode: "0644"
+        owner: root
+        group: root
+
+    - name: Start and Enable borgmatic Timer
+      ansible.builtin.systemd_service:
+        name: borgmatic.timer
+        state: started
+        enabled: true

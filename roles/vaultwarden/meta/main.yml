@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Eli Hopkins
+  description: Deploy vaultwarden Container
+  license: ""
+  min_ansible_version: ""
+  platforms: []
+
+  galaxy_tags:
+    - vaultwarden
+    - authentication
+
+dependencies:
+  - role: vm
+  - role: docker

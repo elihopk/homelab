@@ -1,0 +1,21 @@
+<Config>
+  <BindAddress>*</BindAddress>
+  <Port>9696</Port>
+  <SslPort>6969</SslPort>
+  <EnableSsl>False</EnableSsl>
+  <LaunchBrowser>True</LaunchBrowser>
+  <ApiKey>{{ prowlarr_api_key }}</ApiKey>
+  <AuthenticationMethod>Forms</AuthenticationMethod>
+  <AuthenticationRequired>Enabled</AuthenticationRequired>
+  <Branch>develop</Branch>
+  <LogLevel>debug</LogLevel>
+  <SslCertPath></SslCertPath>
+  <SslCertPassword></SslCertPassword>
+  <UrlBase></UrlBase>
+  <InstanceName>Prowlarr</InstanceName>
+  <UpdateMechanism>Docker</UpdateMechanism>
+  <PostgresUser>prowlarr</PostgresUser>
+  <PostgresPassword>{{ postgres_dbs['prowlarr-main'].password }}</PostgresPassword>
+  <PostgresPort>5432</PostgresPort>
+  <PostgresHost>{{ hostvars['db1'].ansible_host }}</PostgresHost>
+</Config>
