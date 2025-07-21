@@ -31,6 +31,10 @@ services:
       - 80:80
       - 443:443
     restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=994
+      - TZ=America/New_York
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik/certs:/certs
@@ -65,6 +69,9 @@ services:
       - traefikLogs:/logs/traefik
       - autheliaLogs:/logs/authelia
     environment:
+      - PUID=1000
+      - PGID=994
+      - TZ=America/New_York
       - COLLECTIONS=LePresidente/authelia crowdsecurity/traefik crowdsecurity/linux
       - BOUNCER_KEY_TRAEFIK=ph
   watchtower:
@@ -73,6 +80,9 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
+      - PUID=1000
+      - PGID=994
+      - TZ=America/New_York
       - WATCHTOWER_POLL_INTERVAL=86400
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_INCLUDE_STOPPED=true

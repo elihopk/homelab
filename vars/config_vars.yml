@@ -8,7 +8,6 @@ default_gateway: "10.0.1.254"
 
 deluge_wireguard_address: "10.13.37.41/24"
 deluge_wireguard_endpoint: "146.70.137.146:1443"
-deluge_listen_interface: "10.13.37.41"
 
 backup_borg_repo: "ssh://u456419@u456419.your-storagebox.de:23/./hopknet/borg"
 

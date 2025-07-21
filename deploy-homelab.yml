@@ -213,6 +213,25 @@
       ansible.builtin.pause:
         seconds: 10
 
+    - name: Give media Access to iGPU
+      community.proxmox.proxmox_kvm:
+        api_host: "{{ ansible_host }}"
+        api_user: root@pam
+        api_password: "{{ proxmox_servers.proxmox_password }}"
+        validate_certs: false
+        vmid: "{{ hostvars[item].vmid }}"
+        node: "{{ inventory_hostname }}"
+        hostpci:
+          hostpci0: "host=00:02.0,pcie=1,rombar=1,x-vga=0"
+        update: true
+        update_unsafe: true
+      when: item == 'media'
+      loop: "{{ groups['vms'] }}"
+
+    - name: Wait for iGPU on Media
+      ansible.builtin.pause:
+        seconds: 10
+
     - name: Resize VMs
       community.proxmox.proxmox_disk:
         api_host: "{{ ansible_host }}"

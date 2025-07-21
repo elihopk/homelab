@@ -4,7 +4,7 @@ services:
     container_name: bazarr
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=994
       - TZ=America/New_York
     depends_on:
       - "radarr"
@@ -21,7 +21,7 @@ services:
     container_name: radarr
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=994
       - TZ=America/New_York
     depends_on:
       - "deluge"
@@ -41,7 +41,7 @@ services:
     container_name: sonarr
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=994
       - TZ=America/New_York
     depends_on:
       - "deluge"
@@ -67,11 +67,12 @@ services:
       - VPN_PROV=custom
       - VPN_CLIENT=wireguard
       - ENABLE_PRIVOXY=yes
-      - LAN_NETWORK=10.0.1.0/24
+      - LAN_NETWORK=10.0.1.0/24,10.0.2.0/24
       - DEBUG=false
       - NAME_SERVERS=8.8.8.8,8.8.4.4
-      - PGID=1000
       - PUID=1000
+      - PGID=994
+      - TZ=America/New_York
     ports:
       - 8112:8112
     volumes:
@@ -84,7 +85,7 @@ services:
     image: lscr.io/linuxserver/prowlarr:develop
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=994
       - TZ=America/New_York
     ports:
       - 9696:9696
@@ -100,6 +101,8 @@ services:
     ports:
       - 32400:32400
     environment:
+      - PUID=1000
+      - PGID=994
       - TZ=America/New_York
       - ADVERTISE_IP=https://plex.hopk.net/
     hostname: Plex-HOPKNET
@@ -111,8 +114,10 @@ services:
     image: fallenbagel/jellyseerr
     container_name: jellyseerr
     environment:
-      - LOG_LEVEL=debug
+      - PUID=1000
+      - PGID=994
       - TZ=America/New_York
+      - LOG_LEVEL=debug
       - DB_TYPE=postgres
       - DB_HOST={{ hostvars['db1'].ansible_host }}
       - DB_USER=jellyseerr
@@ -127,7 +132,7 @@ services:
     container_name: tautulli
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=994
       - TZ=America/New_York
     depends_on:
       - "plex"
@@ -142,7 +147,7 @@ services:
     restart: unless-stopped
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=994
       - TZ=America/New_York
     ports:
       - 8080:8080
@@ -153,6 +158,10 @@ services:
   watchtower:
     image: containrrr/watchtower
     container_name: watchtower
+    environment:
+      - PUID=1000
+      - PGID=994
+      - TZ=America/New_York
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped

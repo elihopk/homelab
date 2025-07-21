@@ -44,15 +44,15 @@ media_servers:
 infrastructure:
   hosts:
     backup:
-      ansible_host: 10.0.1.23
+      ansible_host: 10.0.1.13
       ansible_user: bkp
       config_src: config/borgmatic
       config_dest: /etc/borgmatic
-      proxmox_host: virt2
+      proxmox_host: virt1
       proxmox_memory: 2048
       proxmox_cores: 2
       proxmox_disk_size: 50
-      vmid: 203
+      vmid: 103
     proxy:
       ansible_host: 10.0.1.11
       ansible_user: rp

@@ -69,7 +69,7 @@
         dest: "/home/{{ ansible_user }}/.ssh/{{ item }}"
         mode: "0600"
         owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
+        group: 994
       loop:
         - "id_rsa"
         - "id_rsa.pub"

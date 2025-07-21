@@ -1,54 +1,69 @@
-- name: Create Directory Structure
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    mode: "0755"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-  loop:
-    - /home/{{ ansible_user }}/delugevpn/config/wireguard
-    - /home/{{ ansible_user }}/bazarr/config/config
-    - /home/{{ ansible_user }}/jellyseerr
-    - /home/{{ ansible_user }}/plex/config/Library/Application Support/Plex Media Server
-    - /home/{{ ansible_user }}/prowlarr/asp
-    - /home/{{ ansible_user }}/radarr/config/asp
-    - /home/{{ ansible_user }}/sabnzbd/config
-    - /home/{{ ansible_user }}/sonarr/config/.config/.mono/keypairs
-    - /home/{{ ansible_user }}/sonarr/config/asp
-    - /home/{{ ansible_user }}/tautulli/config
-    - /home/{{ ansible_user }}/downloads/torrent/incomplete
+- name: Become Block
+  become: true
+  block:
+    - name: Install GPU Drivers
+      ansible.builtin.apt:
+        name:
+          - i965-va-driver
+          - intel-media-va-driver
+        state: present
 
-- name: Render Config Templates
-  ansible.builtin.template:
-    src: "{{ item }}"
-    dest: "{{ ('/home/' + ansible_user + '/' + item) | regex_replace('\\.j2', '') }}"
-    mode: "0664"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-  loop:
-    - bazarr/config/config/config.yaml.j2
-    - delugevpn/config/auth.j2
-    - delugevpn/config/core.conf.j2
-    - delugevpn/config/web.conf.j2
-    - delugevpn/config/wireguard/wg0.conf.j2
-    - jellyseerr/settings.json.j2
-    - plex/config/Library/Application Support/Plex Media Server/.LocalAdminToken.j2
-    - plex/config/Library/Application Support/Plex Media Server/Preferences.xml.j2
-    - prowlarr/asp/key-9f4585eb-85ae-457a-8718-adc2e78bb2e9.xml.j2
-    - prowlarr/config.xml.j2
-    - radarr/config/asp/key-8384a749-988b-46c0-929c-e0b768949e8e.xml.j2
-    - radarr/config/config.xml.j2
-    - sabnzbd/config/sabnzbd.ini.j2
-    - sonarr/config/.config/.mono/keypairs/[1][98f3a7e3-0d6e-f432-8a18-e1144b53633f][-1].xml.j2
-    - sonarr/config/asp/key-e6b38509-64c3-4420-8c71-2364157bcfdd.xml.j2
-    - sonarr/config/config.xml.j2
-    - tautulli/config/config.ini.j2
-    - docker-compose.yml.j2
+    - name: Create Directory Structure
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+        owner: 1000
+        group: 994
+      loop:
+        - /home/{{ ansible_user }}/delugevpn/config/wireguard
+        - /home/{{ ansible_user }}/bazarr/config/config
+        - /home/{{ ansible_user }}/jellyseerr
+        - /home/{{ ansible_user }}/plex/config/Library/Application Support/Plex Media Server
+        - /home/{{ ansible_user }}/prowlarr/asp
+        - /home/{{ ansible_user }}/radarr/config/asp
+        - /home/{{ ansible_user }}/sabnzbd/config
+        - /home/{{ ansible_user }}/sonarr/config/.config/.mono/keypairs
+        - /home/{{ ansible_user }}/sonarr/config/asp
+        - /home/{{ ansible_user }}/tautulli/config
+        - /home/{{ ansible_user }}/downloads/torrent/incomplete
 
-- name: Copy Deluge label.conf
-  ansible.builtin.copy:
-    src: "delugevpn/config/label.conf"
-    dest: "/home/{{ ansible_user }}/delugevpn/config/label.conf"
-    mode: "0664"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    - name: Render Config Templates
+      ansible.builtin.template:
+        src: "{{ item }}"
+        dest: "{{ ('/home/' + ansible_user + '/' + item) | regex_replace('\\.j2', '') }}"
+        mode: "0664"
+        owner: 1000
+        group: 994
+      loop:
+        - bazarr/config/config/config.yaml.j2
+        - delugevpn/config/auth.j2
+        - delugevpn/config/core.conf.j2
+        - delugevpn/config/web.conf.j2
+        - delugevpn/config/wireguard/wg0.conf.j2
+        - jellyseerr/settings.json.j2
+        - plex/config/Library/Application Support/Plex Media Server/.LocalAdminToken.j2
+        - plex/config/Library/Application Support/Plex Media Server/Preferences.xml.j2
+        - prowlarr/asp/key-9f4585eb-85ae-457a-8718-adc2e78bb2e9.xml.j2
+        - prowlarr/config.xml.j2
+        - radarr/config/asp/key-8384a749-988b-46c0-929c-e0b768949e8e.xml.j2
+        - radarr/config/config.xml.j2
+        - sabnzbd/config/sabnzbd.ini.j2
+        - sonarr/config/.config/.mono/keypairs/[1][98f3a7e3-0d6e-f432-8a18-e1144b53633f][-1].xml.j2
+        - sonarr/config/asp/key-e6b38509-64c3-4420-8c71-2364157bcfdd.xml.j2
+        - sonarr/config/config.xml.j2
+        - tautulli/config/config.ini.j2
+        - docker-compose.yml.j2
+
+    - name: Copy Deluge label.conf
+      ansible.builtin.copy:
+        src: "delugevpn/config/label.conf"
+        dest: "/home/{{ ansible_user }}/delugevpn/config/label.conf"
+        mode: "0664"
+        owner: "{{ ansible_user }}"
+        group: 994
+
+    - name: Load iptable_mangle kernel module
+      community.general.modprobe:
+        name: iptable_mangle
+        state: present

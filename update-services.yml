@@ -45,6 +45,16 @@
   roles:
     - backup
 
+- name: Update Packages
+  hosts: all
+  become: true
+  tasks:
+    - name: Update All Packages
+      # noqa package-latest
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
+
 - name: Start Docker Compose Stacks
   hosts: docker
   become: true
@@ -63,13 +73,3 @@
         user: "{{ ansible_user }}"
         state: present
         key: "{{ lookup('file', 'roles/backup/files/id_rsa.pub') }}"
-
-- name: Update Packages
-  hosts: all
-  become: true
-  tasks:
-    - name: Update All Packages
-      # noqa package-latest
-      ansible.builtin.apt:
-        name: "*"
-        state: latest
