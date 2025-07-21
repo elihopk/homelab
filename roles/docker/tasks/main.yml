@@ -12,6 +12,8 @@
         path: /etc/apt/keyrings
         state: directory
         mode: "0755"
+        owner: "root"
+        group: "root"
 
     - name: Download Docker GPG key to /etc/apt/keyrings/docker.asc
       ansible.builtin.get_url:

@@ -52,18 +52,24 @@
         path: "/etc/borgmatic"
         state: directory
         mode: "0755"
+        owner: "root"
+        group: "root"
 
     - name: Render Config Template
       ansible.builtin.template:
         src: config.yaml.j2
         dest: /etc/borgmatic/config.yaml
         mode: "0664"
+        owner: "root"
+        group: "root"
 
     - name: Copy SSH Keys
       ansible.builtin.copy:
         src: "{{ item }}"
         dest: "/home/{{ ansible_user }}/.ssh/{{ item }}"
         mode: "0600"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
       loop:
         - "id_rsa"
         - "id_rsa.pub"

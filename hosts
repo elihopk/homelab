@@ -18,7 +18,7 @@ db_servers:
   vars:
     ansible_user: db
     proxmox_memory: 8192
-    proxmox_cores: 3
+    proxmox_cores: 4
     proxmox_disk_size: 100
   hosts:
     db1:
@@ -32,8 +32,8 @@ media_servers:
     ansible_user: media
     config_src: config/media
     config_dest: /home/media/media
-    proxmox_memory: 8192
-    proxmox_cores: 3
+    proxmox_memory: 16384
+    proxmox_cores: 4
     proxmox_disk_size: 7000
   hosts:
     media1:
@@ -44,21 +44,21 @@ media_servers:
 infrastructure:
   hosts:
     backup:
-      ansible_host: 10.0.1.13
+      ansible_host: 10.0.1.23
       ansible_user: bkp
       config_src: config/borgmatic
       config_dest: /etc/borgmatic
-      proxmox_host: virt1
+      proxmox_host: virt2
       proxmox_memory: 2048
       proxmox_cores: 2
       proxmox_disk_size: 50
-      vmid: 103
+      vmid: 203
     proxy:
       ansible_host: 10.0.1.11
       ansible_user: rp
       config_src: config/proxy
       config_dest: /home/proxy/proxy
-      proxmox_host: virt2
+      proxmox_host: virt1
       proxmox_memory: 2048
       proxmox_cores: 2
       proxmox_disk_size: 10

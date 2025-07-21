@@ -3,6 +3,8 @@
     path: "{{ item }}"
     state: directory
     mode: "0755"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
   loop:
     - /home/{{ ansible_user }}/delugevpn/config/wireguard
     - /home/{{ ansible_user }}/bazarr/config/config
@@ -14,12 +16,15 @@
     - /home/{{ ansible_user }}/sonarr/config/.config/.mono/keypairs
     - /home/{{ ansible_user }}/sonarr/config/asp
     - /home/{{ ansible_user }}/tautulli/config
+    - /home/{{ ansible_user }}/downloads/torrent/incomplete
 
 - name: Render Config Templates
   ansible.builtin.template:
     src: "{{ item }}"
     dest: "{{ ('/home/' + ansible_user + '/' + item) | regex_replace('\\.j2', '') }}"
     mode: "0664"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
   loop:
     - bazarr/config/config/config.yaml.j2
     - delugevpn/config/auth.j2
@@ -45,3 +50,5 @@
     src: "delugevpn/config/label.conf"
     dest: "/home/{{ ansible_user }}/delugevpn/config/label.conf"
     mode: "0664"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"

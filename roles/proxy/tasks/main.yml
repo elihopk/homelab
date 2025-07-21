@@ -37,6 +37,8 @@
         path: "{{ item }}"
         state: directory
         mode: "0755"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
       loop:
         - /home/{{ ansible_user }}/authelia/config
         - /home/{{ ansible_user }}/authelia/secrets
@@ -50,6 +52,8 @@
         dest: "/home/{{ ansible_user }}/docker-compose.yml"
         force: true
         mode: "0664"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
 
     - name: Generate Crowdsec Defaults
       community.docker.docker_compose_v2:
@@ -85,6 +89,8 @@
         src: "{{ item }}"
         dest: "/home/{{ ansible_user }}/{{ item }}"
         mode: "0664"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
       loop:
         - "crowdsec/config/acquis.yaml"
 
@@ -94,6 +100,8 @@
         dest: "{{ ('/home/' + ansible_user + '/' + item) | regex_replace('\\.j2', '') }}"
         force: true
         mode: "0664"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
       loop:
         - authelia/config/configuration.yml.j2
         - authelia/config/users_database.yml.j2
