@@ -13,6 +13,8 @@
       community.docker.docker_compose_v2:
         project_src: /home/{{ ansible_user }}
         state: absent
+      ignore_errors: true
+      # noqa ignore-errors
 
 - name: Configure Media Server
   hosts: media_servers
@@ -51,6 +53,13 @@
     - vars/config_vars.yml
   roles:
     - backup
+
+- name: Configure Samba Server
+  hosts: samba
+  vars_files:
+    - vars/secrets.yml
+  roles:
+    - samba
 
 - name: Update Packages
   hosts: all

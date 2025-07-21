@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Eli Hopkins
+  description: Deploy SMB Server
+  license: ""
+  min_ansible_version: ""
+  platforms: []
+
+  galaxy_tags:
+    - samba
+    - fileshare
+
+dependencies:
+  - role: vm
+  - role: docker

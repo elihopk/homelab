@@ -306,6 +306,13 @@
   roles:
     - backup
 
+- name: Configure Samba Server
+  hosts: samba
+  vars_files:
+    - vars/secrets.yml
+  roles:
+    - samba
+
 - name: Install Backup Public SSH Key on VMs
   hosts: vms
   become: true
