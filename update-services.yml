@@ -1,3 +1,10 @@
+- name: Pre-warm SSH connections
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Ping all hosts to trigger connection & YubiKey touch
+      ansible.builtin.ping:
+
 - name: Stop Docker Compose Stacks
   hosts: docker
   become: true
@@ -73,3 +80,26 @@
         user: "{{ ansible_user }}"
         state: present
         key: "{{ lookup('file', 'roles/backup/files/id_rsa.pub') }}"
+
+- name: Turn Off SSH PasswordAuthentication
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure PasswordAuthentication is disabled
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PasswordAuthentication\s+'
+        line: 'PasswordAuthentication no'
+        state: present
+
+    - name: Ensure PermitRootLogin is key-based only
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin\s+'
+        line: 'PermitRootLogin prohibit-password'
+        state: present
+
+    - name: Restart SSH service to apply changes
+      ansible.builtin.service:
+        name: sshd
+        state: restarted

@@ -33,10 +33,11 @@
       ansible.builtin.apt:
         upgrade: dist
 
-    - name: Install pip
+    - name: Install pip and vim
       ansible.builtin.apt:
         name:
           - pip
+          - vim
         state: present
 
     - name: Ensure proxmoxer is installed
@@ -323,3 +324,26 @@
       community.docker.docker_compose_v2:
         project_src: /home/{{ ansible_user }}
         state: present
+
+- name: Turn Off SSH PasswordAuthentication
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure PasswordAuthentication is disabled
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PasswordAuthentication\s+'
+        line: 'PasswordAuthentication no'
+        state: present
+
+    - name: Ensure PermitRootLogin is key-based only
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin\s+'
+        line: 'PermitRootLogin prohibit-password'
+        state: present
+
+    - name: Restart SSH service to apply changes
+      ansible.builtin.service:
+        name: sshd
+        state: restarted
