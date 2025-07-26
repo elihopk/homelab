@@ -250,7 +250,7 @@ encryption_passphrase: {{ borg_passphrase }}
 
 # Command to use instead of "ssh". This can be used to specify ssh
 # options. Defaults to not set.
-ssh_command: ssh -i /home/{{ ansible_user }}/.ssh/id_rsa
+ssh_command: ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa
 
 # Base path used for various Borg directories. Defaults to $HOME,
 # ~$USER, or ~.
@@ -660,19 +660,23 @@ commands:
       when:
           - create
       run:
-          - mkdir -p /backup
-          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "sudo sqlite3 {{ hostvars['media1'].config_dest }}/tautulli/config/tautulli.db '.backup \"{{ hostvars['media1'].config_dest }}/tautulli/config/tautulli.bak.db\"'"
-          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "sudo sqlite3 {{ hostvars['media1'].config_dest }}/plex/config/Library/Application\\ Support/Plex\\ Media\\ Server/Plug-in\\ Support/Databases/com.plexapp.plugins.library.blobs.db '.backup \"{{ hostvars['media1'].config_dest }}/plex/config/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.blobs.bak.db\"'"
-          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "sudo sqlite3 {{ hostvars['media1'].config_dest }}/plex/config/Library/Application\\ Support/Plex\\ Media\\ Server/Plug-in\\ Support/Databases/com.plexapp.plugins.library.db '.backup \"{{ hostvars['media1'].config_dest }}/plex/config/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.bak.db\"'"
-          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "sudo sqlite3 {{ hostvars['media1'].config_dest }}/sabnzbd/config/admin/history1.db '.backup \"{{ hostvars['media1'].config_dest }}/sabnzbd/config/admin/history1.bak.db\"'"
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "sqlite3 {{ hostvars['media1'].config_dest }}/tautulli/config/tautulli.db '.backup \"{{ hostvars['media1'].config_dest }}/tautulli/config/tautulli.bak.db\"'"
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "sqlite3 {{ hostvars['media1'].config_dest }}/plex/config/Library/Application\\ Support/Plex\\ Media\\ Server/Plug-in\\ Support/Databases/com.plexapp.plugins.library.blobs.db '.backup \"{{ hostvars['media1'].config_dest }}/plex/config/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.blobs.bak.db\"'"
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "sqlite3 {{ hostvars['media1'].config_dest }}/plex/config/Library/Application\\ Support/Plex\\ Media\\ Server/Plug-in\\ Support/Databases/com.plexapp.plugins.library.db '.backup \"{{ hostvars['media1'].config_dest }}/plex/config/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.bak.db\"'"
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "sqlite3 {{ hostvars['media1'].config_dest }}/sabnzbd/config/admin/history1.db '.backup \"{{ hostvars['media1'].config_dest }}/sabnzbd/config/admin/history1.bak.db\"'"
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['budget'].ansible_user }}@{{ hostvars['budget'].ansible_host }} "sudo sqlite3 {{ hostvars['budget'].config_dest }}/server-files/account.sqlite '.backup \"{{ hostvars['budget'].config_dest }}/server-files/account.bak.sqlite\"'"
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['budget'].ansible_user }}@{{ hostvars['budget'].ansible_host }} "sudo sqlite3 {{ hostvars['budget'].config_dest }}/user-files/group-efefe3b6-25ca-44ea-ae8e-b166973d20b0.sqlite '.backup \"{{ hostvars['budget'].config_dest }}/user-files/group-efefe3b6-25ca-44ea-ae8e-b166973d20b0.bak.sqlite\"'"
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" --exclude downloads --exclude library --exclude plex/transcode --exclude "plex/config/Library/Application Support/Plex Media Server/Cache" {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }}:{{ hostvars['media1'].config_dest }} /backup/
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" --exclude redis {{ hostvars['proxy'].ansible_user }}@{{ hostvars['proxy'].ansible_host }}:{{ hostvars['proxy'].config_dest }} /backup/
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" {{ hostvars['vaultwarden'].ansible_user }}@{{ hostvars['vaultwarden'].ansible_host }}:{{ hostvars['vaultwarden'].config_dest }} /backup/
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" {{ hostvars['samba'].ansible_user }}@{{ hostvars['samba'].ansible_host }}:{{ hostvars['samba'].config_dest }} /backup/
+          - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" {{ hostvars['budget'].ansible_user }}@{{ hostvars['budget'].ansible_host }}:{{ hostvars['budget'].config_dest }} /backup/
           - mv -f /backup/media/tautulli/config/tautulli.bak.db /backup/media/tautulli/config/tautulli.db
           - mv -f "/backup/media/plex/config/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.blobs.bak.db" "/backup/media/plex/config/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.blobs.db"
           - mv -f "/backup/media/plex/config/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.bak.db" "/backup/media/plex/config/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db"
           - mv -f /backup/media/sabnzbd/config/admin/history1.bak.db /backup/media/sabnzbd/config/admin/history1.db
+          - mv -f /backup/actual/server-files/account.bak.sqlite /backup/actual/server-files/account.sqlite
+          - mv -f /backup/actual/user-files/group-efefe3b6-25ca-44ea-ae8e-b166973d20b0.bak.sqlite /backup/actual/user-files/group-efefe3b6-25ca-44ea-ae8e-b166973d20b0.sqlite
           - cp -R {{ config_dest }} /backup/
 
     - after: everything
@@ -680,19 +684,22 @@ commands:
           - create
       run:
           - rm -rf /backup/*
-          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "sudo rm {{ hostvars['media1'].config_dest }}/tautulli/config/tautulli.bak.db"
-          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "sudo rm {{ hostvars['media1'].config_dest }}/plex/config/Library/Application\\ Support/Plex\\ Media\\ Server/Plug-in\\ Support/Databases/com.plexapp.plugins.library.blobs.bak.db"
-          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "sudo rm {{ hostvars['media1'].config_dest }}/plex/config/Library/Application\\ Support/Plex\\ Media\\ Server/Plug-in\ Support/Databases/com.plexapp.plugins.library.bak.db"
-          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "sudo rm {{ hostvars['media1'].config_dest }}/sabnzbd/config/admin/history1.bak.db"
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "rm {{ hostvars['media1'].config_dest }}/tautulli/config/tautulli.bak.db"
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "rm {{ hostvars['media1'].config_dest }}/plex/config/Library/Application\\ Support/Plex\\ Media\\ Server/Plug-in\\ Support/Databases/com.plexapp.plugins.library.blobs.bak.db"
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "rm {{ hostvars['media1'].config_dest }}/plex/config/Library/Application\\ Support/Plex\\ Media\\ Server/Plug-in\ Support/Databases/com.plexapp.plugins.library.bak.db"
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "rm {{ hostvars['media1'].config_dest }}/sabnzbd/config/admin/history1.bak.db"
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['budget'].ansible_user }}@{{ hostvars['budget'].ansible_host }} "sudo rm {{ hostvars['budget'].config_dest }}/server-files/account.bak.sqlite"
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['budget'].ansible_user }}@{{ hostvars['budget'].ansible_host }} "sudo rm {{ hostvars['budget'].config_dest }}/user-files/group-efefe3b6-25ca-44ea-ae8e-b166973d20b0.bak.sqlite"
 
     - after: everything
       when:
           - extract
       run:
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" ./backup/media/ {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }}:{{ hostvars['media1'].config_dest }}/
-          - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" ./backup/proxy/ {{ hostvars['proxy'].ansible_user }}@{{ hostvars['proxy'].ansible_host }}:{{ hostvars['proxy'].config_dest }}/
-          - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" ./backup/vaultwarden/ {{ hostvars['vaultwarden'].ansible_user }}@{{ hostvars['vaultwarden'].ansible_host }}:{{ hostvars['vaultwarden'].config_dest }}/
+          - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" ./backup/rp/ {{ hostvars['proxy'].ansible_user }}@{{ hostvars['proxy'].ansible_host }}:{{ hostvars['proxy'].config_dest }}/
+          - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" ./backup/data/ {{ hostvars['vaultwarden'].ansible_user }}@{{ hostvars['vaultwarden'].ansible_host }}:{{ hostvars['vaultwarden'].config_dest }}/
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" ./backup/samba/ {{ hostvars['samba'].ansible_user }}@{{ hostvars['samba'].ansible_host }}:{{ hostvars['samba'].config_dest }}/
+          - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" ./backup/actual/ {{ hostvars['budget'].ansible_user }}@{{ hostvars['budget'].ansible_host }}:{{ hostvars['budget'].config_dest }}/
           - mv -f ./backup/borgmatic {{ config_dest }}
           - rm -rf ./backup
           - rm -rf ./borgmatic

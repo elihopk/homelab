@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Eli Hopkins
+  description: Deploy Actual Budget
+  license: ""
+  min_ansible_version: ""
+  platforms: []
+
+  galaxy_tags:
+    - finance
+    - budgeting
+
+dependencies:
+  - role: vm
+  - role: docker

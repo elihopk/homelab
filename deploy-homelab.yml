@@ -313,15 +313,33 @@
   roles:
     - samba
 
-- name: Install Backup Public SSH Key on VMs
+- name: Configure Actual Server
+  hosts: budget
+  roles:
+    - budget
+
+- name: Install Backup Public SSH Key
   hosts: vms
   become: true
   tasks:
-    - name: Add Public Key to authorized_keys
+    - name: Add Public Key to authorized_keys on VMs
       ansible.posix.authorized_key:
         user: "{{ ansible_user }}"
         state: present
         key: "{{ lookup('file', 'roles/backup/files/id_rsa.pub') }}"
+
+    - name: Add backup server key to Hetzner Storage Box using ssh-copy-id
+      become: false
+      ansible.builtin.shell: >
+        ssh-copy-id
+        -s
+        -i roles/backup/files/id_rsa.pub
+        -o IdentityFile=/home/ehopkins/.ssh/id_ed25519
+        -o Port=23
+        u456419@u456419.your-storagebox.de
+      delegate_to: localhost
+      run_once: true
+      # noqa no-changed-when run-once
 
 - name: Start Docker Compose Stacks
   hosts: docker

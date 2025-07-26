@@ -1,8 +1,9 @@
 - name: Become Block
   become: true
   block:
-    - name: Install rsync
+    - name: Install rsync and sqlite3
       ansible.builtin.apt:
         name:
           - rsync
+          - sqlite3
         state: present

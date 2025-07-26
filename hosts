@@ -30,7 +30,7 @@ db_servers:
 media_servers:
   vars:
     ansible_user: media
-    config_dest: /home/media/media
+    config_dest: /home/media
     proxmox_memory: 16384
     proxmox_cores: 4
     proxmox_disk_size: 7000
@@ -54,21 +54,12 @@ infrastructure:
     proxy:
       ansible_host: 10.0.1.11
       ansible_user: rp
-      config_dest: /home/proxy/proxy
+      config_dest: /home/rp
       proxmox_host: virt1
       proxmox_memory: 2048
       proxmox_cores: 2
       proxmox_disk_size: 10
       vmid: 102
-    vaultwarden:
-      ansible_host: 10.0.1.31
-      config_dest: /home/vw/vaultwarden
-      ansible_user: vw
-      proxmox_host: virt3
-      proxmox_memory: 1024
-      proxmox_cores: 1
-      proxmox_disk_size: 10
-      vmid: 301
     samba:
       ansible_host: 10.0.1.23
       config_dest: /home/smb/samba
@@ -79,12 +70,34 @@ infrastructure:
       proxmox_disk_size: 1000
       vmid: 203
 
+misc:
+  hosts:
+    vaultwarden:
+      ansible_host: 10.0.1.31
+      config_dest: /home/vw/data
+      ansible_user: vw
+      proxmox_host: virt3
+      proxmox_memory: 1024
+      proxmox_cores: 1
+      proxmox_disk_size: 10
+      vmid: 301
+    budget:
+      ansible_host: 10.0.1.32
+      config_dest: /home/bdgt/actual
+      ansible_user: bdgt
+      proxmox_host: virt3
+      proxmox_memory: 2048
+      proxmox_cores: 1
+      proxmox_disk_size: 20
+      vmid: 302
+
 docker:
   hosts:
     media1:
     proxy:
     vaultwarden:
     samba:
+    budget:
 
 vms:
   hosts:
@@ -94,3 +107,4 @@ vms:
     proxy:
     vaultwarden:
     samba:
+    budget:

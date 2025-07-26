@@ -17,8 +17,8 @@
       crowdsecLapiKey = "{{ bouncer_key.stdout }}"
       crowdsecLapiPath = "/"
       remediationStatusCode = 401
-    # [http.middlewares.crowdsec.forwardAuth]
-    #   address = "http://bouncer-traefik:8080/api/v1/forwardAuth"
+    {# [http.middlewares.crowdsec.forwardAuth]
+      address = "http://bouncer-traefik:8080/api/v1/forwardAuth" #}
       trustForwardHeader = true
     [http.middlewares.chain-authelia.chain]
       middlewares = ["https-redirect", "crowdsec", "authelia"]
@@ -163,6 +163,20 @@
       [http.routers.vw-https.tls]
         certResolver = "le"
 
+    # Budget
+    [http.routers.budget]
+      rule = "Host(`budget.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "budget"
+    [http.routers.budget-https]
+      rule = "Host(`budget.hopk.net`)"
+      entryPoints = ["https"]
+      service = "budget"
+      middlewares = ["chain-authelia"]
+      [http.routers.budget-https.tls]
+        certResolver = "le"
+
     # Proxmox
     [http.routers.virt]
       rule = "Host(`virt.hopk.net`)"
@@ -219,6 +233,10 @@
     [http.services.vw.loadBalancer]
       [[http.services.vw.loadBalancer.servers]]
         url = "http://{{ hostvars['vaultwarden'].ansible_host }}:8000"
+
+    [http.services.budget.loadBalancer]
+      [[http.services.budget.loadBalancer.servers]]
+        url = "https://{{ hostvars['budget'].ansible_host }}:5006"
 
     [http.services.virt.loadBalancer]
       [[http.services.virt.loadBalancer.servers]]

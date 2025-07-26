@@ -1,0 +1,39 @@
+- name: Become Block
+  become: true
+  block:
+    - name: Generate private key
+      community.crypto.openssl_privatekey:
+        path: /home/{{ ansible_user }}/actual/selfhost.key
+        size: 2048
+        type: RSA
+        mode: '0600'
+        owner: "{{ ansible_user }}"
+        group: 994
+        state: present
+
+    - name: Generate self-signed certificate
+      community.crypto.x509_certificate:
+        path: /home/{{ ansible_user }}/actual/selfhost.crt
+        privatekey_path: /home/{{ ansible_user }}/actual/selfhost.key
+        provider: selfsigned
+        selfsigned_not_after: "+365d"
+        mode: '0644'
+        owner: "{{ ansible_user }}"
+        group: 994
+        state: present
+
+    - name: Create Directory
+      ansible.builtin.file:
+        path: "/home/{{ ansible_user }}/actual"
+        state: directory
+        mode: "0755"
+        owner: 1000
+        group: 994
+
+    - name: Copy acquis.yaml
+      ansible.builtin.copy:
+        src: "docker-compose.yml"
+        dest: "/home/{{ ansible_user }}/docker-compose.yml"
+        mode: "0664"
+        owner: "1000"
+        group: 994
