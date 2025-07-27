@@ -1,0 +1,83 @@
+<?php
+$CONFIG = array (
+  'htaccess.RewriteBase' => '/',
+  'memcache.local' => '\\OC\\Memcache\\APCu',
+  'apps_paths' => 
+  array (
+    0 => 
+    array (
+      'path' => '/var/www/html/apps',
+      'url' => '/apps',
+      'writable' => false,
+    ),
+    1 => 
+    array (
+      'path' => '/var/www/html/custom_apps',
+      'url' => '/custom_apps',
+      'writable' => true,
+    ),
+  ),
+  'memcache.distributed' => '\\OC\\Memcache\\Redis',
+  'memcache.locking' => '\\OC\\Memcache\\Redis',
+  'redis' => 
+  array (
+    'host' => 'redis',
+    'password' => '',
+    'port' => 6379,
+  ),
+  'upgrade.disable-web' => true,
+  'instanceid' => 'oc1amp0x99gk',
+  'passwordsalt' => '{{ nc_password_salt }}',
+  'secret' => '{{ nc_secret }}',
+  'trusted_domains' => 
+  array (
+    0 => 'nc.hopk.net',
+  ),
+  'datadirectory' => '/var/www/html/data',
+  'dbtype' => 'pgsql',
+  'version' => '31.0.7.1',
+  'overwrite.cli.url' => 'https://nc.hopk.net',
+  'overwriteprotocol' => 'https',
+  'trusted_proxies' => 
+  array (
+    0 => '10.0.1.0/24',
+    1 => '10.0.2.254',
+    2 => '10.0.3.254',
+  ),
+  'forwarded_for_headers' => 
+  array (
+    0 => 'HTTP_X_FORWARDED_FOR',
+  ),
+  'default_phone_region' => 'US',
+  'dbname' => 'nextcloud',
+  'dbhost' => '{{ hostvars['db1'].ansible_host }}',
+  'dbport' => '',
+  'dbtableprefix' => 'oc_',
+  'dbuser' => 'nextcloud',
+  'dbpassword' => '{{ postgres_dbs.nextcloud.password }}',
+  'installed' => true,
+  'app_install_overwrite' => 
+  array (
+  ),
+  'twofactor_enforced' => 'true',
+  'twofactor_enforced_groups' => 
+  array (
+  ),
+  'twofactor_enforced_excluded_groups' => 
+  array (
+  ),
+  'maintenance' => false,
+  'maintenance_window_start' => 4,
+  'memories.db.triggers.fcu' => true,
+  'memories.exiftool' => '/var/www/html/custom_apps/memories/bin-ext/exiftool-amd64-glibc',
+  'memories.vod.path' => '/var/www/html/custom_apps/memories/bin-ext/go-vod-amd64',
+  'memories.vod.ffmpeg' => '/usr/bin/ffmpeg',
+  'memories.vod.ffprobe' => '/usr/bin/ffprobe',
+  'enabledPreviewProviders' => 
+  array (
+    0 => 'OC\\Preview\\Movie',
+    1 => 'OC\\Preview\\Image',
+  ),
+  'preview_max_x' => 1024,
+  'preview_max_y' => 1024,
+);

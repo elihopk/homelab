@@ -306,12 +306,12 @@
   roles:
     - backup
 
-- name: Configure Samba Server
-  hosts: samba
+- name: Configure NextCloud Server
+  hosts: nextcloud
   vars_files:
     - vars/secrets.yml
   roles:
-    - samba
+    - nextcloud
 
 - name: Configure Actual Server
   hosts: budget

@@ -60,13 +60,13 @@ infrastructure:
       proxmox_cores: 2
       proxmox_disk_size: 10
       vmid: 102
-    samba:
+    nextcloud:
       ansible_host: 10.0.1.23
-      config_dest: /home/smb/samba
-      ansible_user: smb
+      config_dest: /home/nc/nextcloud
+      ansible_user: nc
       proxmox_host: virt2
-      proxmox_memory: 1024
-      proxmox_cores: 1
+      proxmox_memory: 4096
+      proxmox_cores: 2
       proxmox_disk_size: 1000
       vmid: 203
 
@@ -96,7 +96,7 @@ docker:
     media1:
     proxy:
     vaultwarden:
-    samba:
+    nextcloud:
     budget:
 
 vms:
@@ -106,5 +106,5 @@ vms:
     backup:
     proxy:
     vaultwarden:
-    samba:
+    nextcloud:
     budget:

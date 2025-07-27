@@ -8,6 +8,12 @@
       address = "http://authelia:9091/api/verify?rd=https://auth.hopk.net"
       trustForwardHeader = true
       authResponseHeaders = ["Remote-User", "Remote-Groups"]
+    [http.middlewares.hsts-headers.headers]
+      stsSeconds = 15552000
+      stsIncludeSubdomains = true
+      stsPreload = true
+    [http.middlewares.ws-headers.headers]
+      customRequestHeaders = { Connection = "Upgrade", Upgrade = "websocket" }
     [http.middlewares.crowdsec.plugin.bouncer]
       enabled = true
       logLevel = "debug"
@@ -190,6 +196,48 @@
       middlewares = ["chain-authelia"]
       [http.routers.virt-https.tls]
         certResolver = "le"
+
+    # NextCloud
+    [http.routers.nc]
+      rule = "Host(`nc.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "nc"
+    [http.routers.nc-https]
+      rule = "Host(`nc.hopk.net`)"
+      entryPoints = ["https"]
+      service = "nc"
+      middlewares = ["crowdsec", "hsts-headers"]
+      [http.routers.nc-https.tls]
+        certResolver = "le"
+
+    # Collabora
+    [http.routers.office]
+      rule = "Host(`office.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "office"
+    [http.routers.office-https]
+      rule = "Host(`office.hopk.net`)"
+      entryPoints = ["https"]
+      service = "office"
+      middlewares = ["crowdsec", "ws-headers"]
+      [http.routers.office-https.tls]
+        certResolver = "le"
+
+    # NextCloud Whiteboard
+    [http.routers.ncwb]
+      rule = "Host(`ncwb.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "ncwb"
+    [http.routers.ncwb-https]
+      rule = "Host(`ncwb.hopk.net`)"
+      entryPoints = ["https"]
+      service = "ncwb"
+      middlewares = ["crowdsec", "ws-headers"]
+      [http.routers.ncwb-https.tls]
+        certResolver = "le"
       
 
   [http.services]
@@ -241,3 +289,15 @@
     [http.services.virt.loadBalancer]
       [[http.services.virt.loadBalancer.servers]]
         url = "https://{{ hostvars['virt1'].ansible_host }}:8006"
+
+    [http.services.nc.loadBalancer]
+      [[http.services.nc.loadBalancer.servers]]
+        url = "http://{{ hostvars['nextcloud'].ansible_host }}:8081"
+
+    [http.services.office.loadBalancer]
+      [[http.services.office.loadBalancer.servers]]
+        url = "https://{{ hostvars['nextcloud'].ansible_host }}:9980"
+
+    [http.services.ncwb.loadBalancer]
+      [[http.services.ncwb.loadBalancer.servers]]
+        url = "http://{{ hostvars['nextcloud'].ansible_host }}:3002"

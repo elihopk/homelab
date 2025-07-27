@@ -1,13 +1,14 @@
 galaxy_info:
   author: Eli Hopkins
-  description: Deploy SMB Server
+  description: Deploy NextCloud Stack
   license: ""
   min_ansible_version: ""
   platforms: []
 
   galaxy_tags:
-    - samba
-    - fileshare
+    - nextcloud
+    - files
+    - office
 
 dependencies:
   - role: vm
