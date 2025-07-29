@@ -74,6 +74,20 @@ services:
       - TZ=America/New_York
       - COLLECTIONS=LePresidente/authelia crowdsecurity/traefik crowdsecurity/linux
       - BOUNCER_KEY_TRAEFIK=ph
+  postfix:
+    image: boky/postfix:edge-debian
+    container_name: postfix
+    restart: unless-stopped
+    ports:
+      - 587:587
+    environment:
+      - TZ=America/New_York
+      - HOSTNAME=postfix-docker
+      - ALLOWED_SENDER_DOMAINS=hopk.net
+      - MYNETWORKS=10.0.1.0/24 172.16.0.0/12
+      - RELAYHOST=smtp.gmail.com:587
+      - RELAYHOST_USERNAME=hopknetrelay@gmail.com
+      - RELAYHOST_PASSWORD={{ relayhost_password }}
   watchtower:
     image: containrrr/watchtower
     container_name: watchtower

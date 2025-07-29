@@ -1277,8 +1277,8 @@ notifier:
   ##
   ## Important: Kubernetes (or HA) users must read https://www.authelia.com/t/statelessness
   ##
-  filesystem:
-    filename: '/config/notification.txt'
+  ## filesystem:
+  ##   filename: '/config/notification.txt'
 
   ##
   ## SMTP (Notification Provider)
@@ -1290,9 +1290,9 @@ notifier:
   ##        (only works for unauthenticated connections)
   ##   - validate the SMTP server x509 certificate during the TLS handshake against the hosts trusted certificates
   ##     (configure in tls section)
-  # smtp:
+  smtp:
     ## The address of the SMTP server to connect to in the address common syntax.
-    # address: 'smtp://127.0.0.1:25'
+    address: 'smtp://10.0.1.11:587'
 
     ## The connection timeout in the duration common syntax.
     # timeout: '5 seconds'
@@ -1307,13 +1307,13 @@ notifier:
     ## The sender is used to is used for the MAIL FROM command and the FROM header.
     ## If this is not defined and the username is an email, we use the username as this value. This can either be just
     ## an email address or the RFC5322 'Name <email address>' format.
-    # sender: 'Authelia <admin@example.com>'
+    sender: 'Authelia <auth@hopk.net>'
 
     ## HELO/EHLO Identifier. Some SMTP Servers may reject the default of localhost.
-    # identifier: 'localhost'
+    identifier: 'hopk.net'
 
     ## Subject configuration of the emails sent. {title} is replaced by the text from the notifier.
-    # subject: '[Authelia] {title}'
+    subject: '[Authelia] {title}'
 
     ## This address is used during the startup check to verify the email configuration is correct.
     ## It's not important what it is except if your email server only allows local delivery.
@@ -1325,7 +1325,7 @@ notifier:
     ## Disables sending HTML formatted emails.
     # disable_html_emails: false
 
-    # tls:
+    tls:
       ## The server subject name to check the servers certificate against during the validation process.
       ## This option is not required if the certificate has a SAN which matches the address options hostname.
       # server_name: 'smtp.example.com'
@@ -1336,7 +1336,7 @@ notifier:
       ## It's important to note the public key should be added to the directory, not the private key.
       ## This option is strongly discouraged but may be useful in some self-signed situations where validation is not
       ## important to the administrator.
-      # skip_verify: false
+      skip_verify: true
 
       ## Minimum TLS version for the connection.
       # minimum_version: 'TLS1.2'

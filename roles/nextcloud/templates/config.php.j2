@@ -80,4 +80,19 @@ $CONFIG = array (
   ),
   'preview_max_x' => 1024,
   'preview_max_y' => 1024,
+  'mail_smtpmode' => 'smtp',
+  'mail_sendmailmode' => 'smtp',
+  'mail_from_address' => 'nextcloud',
+  'mail_domain' => 'hopk.net',
+  'mail_smtphost' => '10.0.1.11',
+  'mail_smtpport' => '587',
+  'mail_smtpauth' => 0,
+  'mail_smtpsecure' => 'tls',
+  'mail_smtpstreamoptions' => [
+    'ssl' => [
+      'verify_peer' => false,
+      'verify_peer_name' => false,
+      'allow_self_signed' => true
+    ]
+  ]
 );
