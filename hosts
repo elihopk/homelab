@@ -90,6 +90,15 @@ misc:
       proxmox_cores: 1
       proxmox_disk_size: 20
       vmid: 302
+    resume:
+      ansible_host: 10.0.1.33
+      config_dest: /home/res/resume
+      ansible_user: res
+      proxmox_host: virt3
+      proxmox_memory: 1024
+      proxmox_cores: 1
+      proxmox_disk_size: 20
+      vmid: 303
 
 docker:
   hosts:
@@ -98,6 +107,7 @@ docker:
     vaultwarden:
     nextcloud:
     budget:
+    resume:
 
 vms:
   hosts:
@@ -108,3 +118,4 @@ vms:
     vaultwarden:
     nextcloud:
     budget:
+    resume:

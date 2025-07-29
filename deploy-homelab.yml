@@ -229,6 +229,20 @@
       when: item == 'media'
       loop: "{{ groups['vms'] }}"
 
+    - name: Give resume Host CPU
+      community.proxmox.proxmox_kvm:
+        api_host: "{{ ansible_host }}"
+        api_user: root@pam
+        api_password: "{{ proxmox_servers.proxmox_password }}"
+        validate_certs: false
+        vmid: "{{ hostvars[item].vmid }}"
+        node: "{{ inventory_hostname }}"
+        cpu: "host"
+        update: true
+        update_unsafe: true
+      when: item == 'resume'
+      loop: "{{ groups['vms'] }}"
+
     - name: Wait for iGPU on Media
       ansible.builtin.pause:
         seconds: 10
@@ -317,6 +331,13 @@
   hosts: budget
   roles:
     - budget
+
+- name: Configure Reactive Resume
+  hosts: resume
+  vars_files:
+    - vars/secrets.yml
+  roles:
+    - resume
 
 - name: Install Backup Public SSH Key
   hosts: vms

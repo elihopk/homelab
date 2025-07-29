@@ -1,0 +1,21 @@
+- name: Become Block
+  become: true
+  block:
+    - name: Create Data Folder
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+        owner: "{{ ansible_user }}"
+        group: 994
+      loop:
+        - "/home/{{ ansible_user }}/resume"
+
+    - name: Render Docker Compose
+      ansible.builtin.template:
+        src: "docker-compose.yml.j2"
+        dest: "/home/{{ ansible_user }}/docker-compose.yml"
+        force: true
+        mode: "0664"
+        owner: "{{ ansible_user }}"
+        group: 994

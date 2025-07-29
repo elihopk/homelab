@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Eli Hopkins
+  description: Deploy Reactive Resume
+  license: ""
+  min_ansible_version: ""
+  platforms: []
+
+  galaxy_tags:
+    - resume
+    - employment
+
+dependencies:
+  - role: vm
+  - role: docker

@@ -829,6 +829,19 @@ access_control:
         - "group:admin"
       policy: two_factor
 
+    - domain: "resume.hopk.net"
+      policy: bypass
+      networks:
+        - 10.0.0.0/8
+
+    - domain: "resume.hopk.net"
+      subject:
+        - "group:admin"
+      policy: two_factor
+
+    - domain: "s3.hopk.net"
+      policy: bypass
+
     - domain: "virt.hopk.net"
       subject:
         - "group:admin"

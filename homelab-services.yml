@@ -66,6 +66,13 @@
   roles:
     - budget
 
+- name: Configure Reactive Resume
+  hosts: resume
+  vars_files:
+    - vars/secrets.yml
+  roles:
+    - resume
+
 - name: Install Backup Public SSH Key on VMs
   hosts: vms
   become: true

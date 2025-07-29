@@ -239,6 +239,34 @@
       [http.routers.ncwb-https.tls]
         certResolver = "le"
       
+    # Resume
+    [http.routers.resume]
+      rule = "Host(`resume.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "resume"
+    [http.routers.resume-https]
+      rule = "Host(`resume.hopk.net`)"
+      entryPoints = ["https"]
+      service = "resume"
+      middlewares = ["chain-authelia"]
+      [http.routers.resume-https.tls]
+        certResolver = "le"
+
+    # Resume
+    [http.routers.s3]
+      rule = "Host(`s3.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "s3"
+    [http.routers.s3-https]
+      rule = "Host(`s3.hopk.net`)"
+      entryPoints = ["https"]
+      service = "s3"
+      middlewares = ["chain-authelia"]
+      [http.routers.s3-https.tls]
+        certResolver = "le"
+
 
   [http.services]
     # These use default Docker internal ports
@@ -301,3 +329,11 @@
     [http.services.ncwb.loadBalancer]
       [[http.services.ncwb.loadBalancer.servers]]
         url = "http://{{ hostvars['nextcloud'].ansible_host }}:3002"
+
+    [http.services.resume.loadBalancer]
+      [[http.services.resume.loadBalancer.servers]]
+        url = "http://{{ hostvars['resume'].ansible_host }}:3000"
+
+    [http.services.s3.loadBalancer]
+      [[http.services.s3.loadBalancer.servers]]
+        url = "http://{{ hostvars['resume'].ansible_host }}:9000"
