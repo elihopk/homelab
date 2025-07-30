@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Eli Hopkins
+  description: Deploy SearXNG Stack
+  license: ""
+  min_ansible_version: ""
+  platforms: []
+
+  galaxy_tags:
+    - search
+    - searxng
+
+dependencies:
+  - role: vm
+  - role: docker

@@ -73,6 +73,13 @@
   roles:
     - resume
 
+- name: Configure Search Server
+  hosts: search
+  vars_files:
+    - vars/secrets.yml
+  roles:
+    - search
+
 - name: Update Packages
   hosts: all
   become: true

@@ -1,9 +1,16 @@
 - name: Become Block
   become: true
   block:
-    - name: Install rsync and sqlite3
+    - name: Install rsync, sqlite3, and qemu-guest-agent
       ansible.builtin.apt:
         name:
           - rsync
           - sqlite3
+          - qemu-guest-agent
         state: present
+
+    - name: Enable qemu-guest-agent
+      ansible.builtin.systemd:
+        name: qemu-guest-agent
+        enabled: true
+        state: started

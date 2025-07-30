@@ -1,0 +1,21 @@
+services:
+  redis:
+    container_name: redis
+    image: docker.io/valkey/valkey:8-alpine
+    command: valkey-server --save 30 1 --loglevel warning
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    volumes:
+      - ./search/cache:/data
+  searxng:
+    container_name: searxng
+    image: docker.io/searxng/searxng:latest
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    volumes:
+      - ./search/config:/etc/searxng
+      - ./search/data:/var/cache/searxng
+    environment:
+      - SEARXNG_BASE_URL=https://search.hopk.net/

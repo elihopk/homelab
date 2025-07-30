@@ -99,6 +99,14 @@ misc:
       proxmox_cores: 1
       proxmox_disk_size: 20
       vmid: 303
+    search:
+      ansible_host: 10.0.1.24
+      config_dest: /home/sx/search
+      ansible_user: sx
+      proxmox_host: virt2
+      proxmox_memory: 2048
+      proxmox_cores: 2
+      proxmox_disk_size: 10
 
 docker:
   hosts:
@@ -108,6 +116,7 @@ docker:
     nextcloud:
     budget:
     resume:
+    search:
 
 vms:
   hosts:
@@ -119,3 +128,4 @@ vms:
     nextcloud:
     budget:
     resume:
+    search:

@@ -253,7 +253,7 @@
       [http.routers.resume-https.tls]
         certResolver = "le"
 
-    # Resume
+    # Resume S3
     [http.routers.s3]
       rule = "Host(`s3.hopk.net`)"
       entryPoints = ["http"]
@@ -265,6 +265,20 @@
       service = "s3"
       middlewares = ["chain-authelia"]
       [http.routers.s3-https.tls]
+        certResolver = "le"
+
+    # Search
+    [http.routers.search]
+      rule = "Host(`search.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "search"
+    [http.routers.search-https]
+      rule = "Host(`search.hopk.net`)"
+      entryPoints = ["https"]
+      service = "search"
+      middlewares = ["chain-authelia"]
+      [http.routers.search-https.tls]
         certResolver = "le"
 
 
@@ -337,3 +351,7 @@
     [http.services.s3.loadBalancer]
       [[http.services.s3.loadBalancer.servers]]
         url = "http://{{ hostvars['resume'].ansible_host }}:9000"
+
+    [http.services.search.loadBalancer]
+      [[http.services.search.loadBalancer.servers]]
+        url = "http://{{ hostvars['search'].ansible_host }}:8080"
