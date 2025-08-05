@@ -673,6 +673,7 @@ commands:
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" --exclude cache {{ hostvars['nextcloud'].ansible_user }}@{{ hostvars['nextcloud'].ansible_host }}:{{ hostvars['nextcloud'].config_dest }} /backup/
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" {{ hostvars['resume'].ansible_user }}@{{ hostvars['resume'].ansible_host }}:{{ hostvars['resume'].config_dest }} /backup/
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" --exclude cache {{ hostvars['search'].ansible_user }}@{{ hostvars['search'].ansible_host }}:{{ hostvars['search'].config_dest }} /backup/
+          - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" {{ hostvars['monitor'].ansible_user }}@{{ hostvars['monitor'].ansible_host }}:{{ hostvars['monitor'].config_dest }} /backup/
           - mv -f /backup/media/tautulli/config/tautulli.bak.db /backup/media/tautulli/config/tautulli.db
           - mv -f "/backup/media/plex/config/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.blobs.bak.db" "/backup/media/plex/config/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.blobs.db"
           - mv -f "/backup/media/plex/config/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.bak.db" "/backup/media/plex/config/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db"
@@ -704,6 +705,7 @@ commands:
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" ./backup/nextcloud/ {{ hostvars['nextcloud'].ansible_user }}@{{ hostvars['nextcloud'].ansible_host }}:{{ hostvars['nextcloud'].config_dest }}/
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" ./backup/resume/ {{ hostvars['resume'].ansible_user }}@{{ hostvars['resume'].ansible_host }}:{{ hostvars['resume'].config_dest }}/
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" ./backup/search/ {{ hostvars['search'].ansible_user }}@{{ hostvars['search'].ansible_host }}:{{ hostvars['search'].config_dest }}/
+          - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" ./backup/search/ {{ hostvars['monitor'].ansible_user }}@{{ hostvars['monitor'].ansible_host }}:{{ hostvars['monitor'].config_dest }}/
           - mv -f ./backup/borgmatic {{ config_dest }}
           - rm -rf ./backup
           - rm -rf ./borgmatic

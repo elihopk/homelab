@@ -1,14 +1,15 @@
 galaxy_info:
   author: Eli Hopkins
-  description: Bootstrap VMs
+  description: Deploy Monitoring Stack
   license: ""
   min_ansible_version: ""
   platforms: []
 
   galaxy_tags:
-    - virtualization
-    - vm
-    - kvm
+    - monitoring
+    - prometheus
+    - grafana
 
 dependencies:
-  - role: prometheus.prometheus.node_exporter
+  - role: vm
+  - role: docker

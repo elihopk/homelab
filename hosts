@@ -69,6 +69,15 @@ infrastructure:
       proxmox_cores: 2
       proxmox_disk_size: 1000
       vmid: 203
+    monitor:
+      ansible_host: 10.0.1.25
+      config_dest: /home/mon/monitor
+      ansible_user: mon
+      proxmox_host: virt2
+      proxmox_memory: 8192
+      proxmox_cores: 2
+      proxmox_disk_size: 100
+      vmid: 205
 
 misc:
   hosts:
@@ -117,6 +126,7 @@ docker:
     budget:
     resume:
     search:
+    monitor:
 
 vms:
   hosts:
@@ -129,3 +139,4 @@ vms:
     budget:
     resume:
     search:
+    monitor:

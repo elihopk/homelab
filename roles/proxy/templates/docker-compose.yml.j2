@@ -30,6 +30,7 @@ services:
     ports:
       - 80:80
       - 443:443
+      - 8082:8082
     restart: unless-stopped
     environment:
       - PUID=1000
@@ -61,6 +62,8 @@ services:
     image: crowdsecurity/crowdsec:latest
     container_name: crowdsec
     restart: unless-stopped
+    ports:
+      - 6060:6060
     volumes:
       - ./crowdsec/config:/etc/crowdsec
       - ./crowdsec/data:/var/lib/crowdsec/data

@@ -347,6 +347,37 @@
   roles:
     - search
 
+- name: Configure Monitoring Server
+  hosts: monitor
+  vars_files:
+    - vars/secrets.yml
+  roles:
+    - monitor
+
+- name: Install rsyslog on Non-Docker Hosts
+  hosts: all:!docker
+  become: true
+  tasks:
+    - name: Install rsyslog
+      ansible.builtin.apt:
+        name: rsyslog
+        state: present
+
+    - name: Copy rsyslog Config
+      ansible.builtin.template:
+        src: "templates/rsyslog.conf.j2"
+        dest: "/etc/rsyslog.conf"
+        force: true
+        mode: "0664"
+        owner: root
+        group: root
+
+    - name: Start and Enable rsyslog
+      ansible.builtin.systemd_service:
+        name: rsyslog
+        state: restarted
+        enabled: true
+
 - name: Install Backup Public SSH Key
   hosts: vms
   become: true

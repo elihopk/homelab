@@ -1,0 +1,95 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 30s
+  body_size_limit: 15MB
+  sample_limit: 1500
+  target_limit: 30
+  label_limit: 30
+  label_name_length_limit: 200
+  label_value_length_limit: 200
+  query_log_file: query.log
+  scrape_failure_log_file: fail.log
+  # scrape_timeout is set to the global default (10s).
+
+runtime:
+  gogc: 75
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['{{ ansible_host }}:3100']
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['{{ ansible_host }}:3000']
+  - job_name: 'traefik'
+    static_configs:
+      - targets: ['{{ hostvars["proxy"]["ansible_host"] }}:8082']
+  - job_name: 'crowdsec'
+    static_configs:
+      - targets: ['{{ hostvars["proxy"]["ansible_host"] }}:6060']
+  - job_name: 'proxmox-nodes'
+    static_configs:
+      - targets:
+{% for host in groups['proxmox_servers'] %}
+        - '{{ hostvars[host]["ansible_host"] }}'
+{% endfor %}
+    metrics_path: /pve
+    params:
+      module: [default]
+      cluster: ['0']
+      node: ['1']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: {{ ansible_host }}:9221
+  - job_name: 'proxmox-cluster'
+    static_configs:
+      - targets:
+        - '{{ hostvars["virt1"]["ansible_host"] }}'
+    metrics_path: /pve
+    params:
+      module: [default]
+      cluster: ['1']
+      node: ['0']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: {{ ansible_host }}:9221
+  - job_name: 'node'
+    sample_limit: 100000
+    label_limit: 100
+    label_name_length_limit: 100
+    label_value_length_limit: 512
+    static_configs:
+      - targets:
+{% for host in groups['vms'] %}
+        - '{{ hostvars[host]["ansible_host"] }}:9100'
+{% endfor %}
+  - job_name: 'postgres'
+    static_configs:
+      - targets:
+{% for host in groups['db_servers'] %}
+        - '{{ hostvars[host]["ansible_host"] }}:9187'
+{% endfor %}
+  - job_name: 'cadvisor'
+    sample_limit: 100000
+    label_limit: 100
+    label_name_length_limit: 200
+    label_value_length_limit: 512
+    static_configs:
+      - targets:
+{% for host in groups['docker'] %}
+        - '{{ hostvars[host]["ansible_host"] }}:8085'
+{% endfor %}
+storage:
+  tsdb:
+    out_of_order_time_window: 30m

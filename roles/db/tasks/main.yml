@@ -1,3 +1,10 @@
+- name: Include postgres_exporter with variables
+  ansible.builtin.include_role:
+    name: prometheus.prometheus.postgres_exporter
+  vars:
+    postgres_exporter_user: postgres
+    postgres_exporter_password: "{{ postgres_password }}"
+
 - name: Become Block
   become: true
   block:

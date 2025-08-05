@@ -5,14 +5,16 @@
     - name: Ping all hosts to trigger connection & YubiKey touch
       ansible.builtin.ping:
 
-- name: Stop Docker Compose Stacks
+- name: Stop All Docker Containers
   hosts: docker
   become: true
   tasks:
-    - name: Stop Docker Compose Stacks in all VMs
-      community.docker.docker_compose_v2:
-        project_src: /home/{{ ansible_user }}
-        state: absent
+    - name: Stop all running containers
+      ansible.builtin.shell: |
+        docker ps -q | xargs -r docker rm -f
+      args:
+        executable: /bin/bash
+      changed_when: false
       ignore_errors: true
       # noqa ignore-errors
 
@@ -79,6 +81,37 @@
     - vars/secrets.yml
   roles:
     - search
+
+- name: Configure Monitoring Server
+  hosts: monitor
+  vars_files:
+    - vars/secrets.yml
+  roles:
+    - monitor
+
+- name: Install rsyslog on Non-Docker Hosts
+  hosts: all:!docker
+  become: true
+  tasks:
+    - name: Install rsyslog
+      ansible.builtin.apt:
+        name: rsyslog
+        state: present
+
+    - name: Copy rsyslog Config
+      ansible.builtin.template:
+        src: "templates/rsyslog.conf.j2"
+        dest: "/etc/rsyslog.conf"
+        force: true
+        mode: "0664"
+        owner: root
+        group: root
+
+    - name: Start and Enable rsyslog
+      ansible.builtin.systemd_service:
+        name: rsyslog
+        state: restarted
+        enabled: true
 
 - name: Update Packages
   hosts: all

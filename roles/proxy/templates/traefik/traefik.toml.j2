@@ -7,6 +7,9 @@
   filePath = "/var/log/traefik/traefik.log"
 [accessLog]
   filePath = "/var/log/traefik/access.log"
+[metrics]
+  [metrics.prometheus]
+    entryPoint = "metrics"
 [providers]
   [providers.docker]
     exposedByDefault = false
@@ -17,6 +20,8 @@
     address = ":80"
   [entryPoints.https]
     address = ":443"
+  [entryPoints.metrics]
+    address = ":8082"
 [certificatesResolvers.le.acme]
   email = "{{ owner_email }}"
   storage = "/certs/acme.json"

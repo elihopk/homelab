@@ -1,0 +1,56 @@
+- name: Become Block
+  become: true
+  block:
+    - name: Create Monitoring Directory Structure
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+        owner: "{{ ansible_user }}"
+        group: 994
+      loop:
+        - "/home/{{ ansible_user }}/monitor/loki/data"
+        - "/home/{{ ansible_user }}/monitor/loki/config"
+        - "/home/{{ ansible_user }}/monitor/prometheus/data"
+        - "/home/{{ ansible_user }}/monitor/prometheus/config"
+        - "/home/{{ ansible_user }}/monitor/promtail"
+        - "/home/{{ ansible_user }}/monitor/redis"
+
+    - name: Create Grafana Directory Structure
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+        owner: 472
+        group: 472
+      loop:
+        - "/home/{{ ansible_user }}/monitor/grafana/data"
+        - "/home/{{ ansible_user }}/monitor/grafana/config"
+
+    - name: Render Configs
+      ansible.builtin.template:
+        src: "{{ item }}.j2"
+        dest: "/home/{{ ansible_user }}/monitor/{{ item }}"
+        force: true
+        mode: "0664"
+        owner: "{{ ansible_user }}"
+        group: 994
+      loop:
+        - "grafana/config/grafana.ini"
+        - "loki/config/local-config.yaml"
+        - "prometheus/config/prometheus.yml"
+        - "promtail/config.yml"
+
+    - name: Render Docker Compose
+      ansible.builtin.template:
+        src: "docker-compose.yml.j2"
+        dest: "/home/{{ ansible_user }}/docker-compose.yml"
+        force: true
+        mode: "0664"
+        owner: "{{ ansible_user }}"
+        group: 994
+
+    - name: Remove positions.yaml
+      ansible.builtin.file:
+        name: /var/log/positions.yaml
+        state: absent

@@ -281,6 +281,20 @@
       [http.routers.search-https.tls]
         certResolver = "le"
 
+    # Monitor
+    [http.routers.monitor]
+      rule = "Host(`monitor.hopk.net`)"
+      entryPoints = ["http"]
+      middlewares = ["https-redirect"]
+      service = "monitor"
+    [http.routers.monitor-https]
+      rule = "Host(`monitor.hopk.net`)"
+      entryPoints = ["https"]
+      service = "monitor"
+      middlewares = ["chain-authelia"]
+      [http.routers.monitor-https.tls]
+        certResolver = "le"
+
 
   [http.services]
     # These use default Docker internal ports
@@ -355,3 +369,7 @@
     [http.services.search.loadBalancer]
       [[http.services.search.loadBalancer.servers]]
         url = "http://{{ hostvars['search'].ansible_host }}:8080"
+
+    [http.services.monitor.loadBalancer]
+      [[http.services.monitor.loadBalancer.servers]]
+        url = "http://{{ hostvars['monitor'].ansible_host }}:3000"
