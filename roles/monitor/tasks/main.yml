@@ -13,8 +13,8 @@
         - "/home/{{ ansible_user }}/monitor/loki/config"
         - "/home/{{ ansible_user }}/monitor/prometheus/data"
         - "/home/{{ ansible_user }}/monitor/prometheus/config"
-        - "/home/{{ ansible_user }}/monitor/promtail"
         - "/home/{{ ansible_user }}/monitor/redis"
+        - "/home/{{ ansible_user }}/monitor/alloy"
 
     - name: Create Grafana Directory Structure
       ansible.builtin.file:
@@ -39,7 +39,7 @@
         - "grafana/config/grafana.ini"
         - "loki/config/local-config.yaml"
         - "prometheus/config/prometheus.yml"
-        - "promtail/config.yml"
+        - "alloy/config.alloy"
 
     - name: Render Docker Compose
       ansible.builtin.template:

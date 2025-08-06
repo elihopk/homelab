@@ -2,8 +2,7 @@
   ansible.builtin.include_role:
     name: prometheus.prometheus.postgres_exporter
   vars:
-    postgres_exporter_user: postgres
-    postgres_exporter_password: "{{ postgres_password }}"
+    postgres_exporter_name: "postgresql://postgres:{{ postgres_password }}@localhost:5432"
 
 - name: Become Block
   become: true

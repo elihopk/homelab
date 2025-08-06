@@ -68,6 +68,6 @@ user.*                          -/var/log/user.log
 #
 *.emerg                         :omusrmsg:*
 
-# Send logs to monitor VM promtail
+# Send logs to monitor VM alloy
 
 *.* @@{{ hostvars["monitor"].ansible_host }}:1514;RSYSLOG_SyslogProtocol23Format

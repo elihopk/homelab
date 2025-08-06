@@ -1,0 +1,68 @@
+local.file_match "system_logs" {
+  path_targets = [
+    {
+      __path__ = "/var/log/**/*.log",
+    },
+  ]
+}
+
+loki.relabel "system" {
+  forward_to = [loki.relabel.global.receiver]
+
+  rule {
+    action = "replace"
+    target_label = "service_name"
+    replacement = "system"
+  }
+}
+
+loki.relabel "docker" {
+  forward_to = [loki.relabel.global.receiver]
+
+  rule {
+    action = "replace"
+    target_label = "service_name"
+    replacement = "docker"
+  }
+}
+
+loki.relabel "global" {
+  forward_to = [loki.write.local.receiver]
+
+  rule {
+    action = "replace"
+    target_label = "host"
+    replacement = "{{ inventory_hostname }}"
+  }
+}
+
+loki.source.file "system" {
+  forward_to = [loki.relabel.system.receiver]
+  targets = local.file_match.system_logs.targets
+}
+
+discovery.docker "linux" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "docker" {
+  targets=discovery.docker.linux.targets
+  
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+}
+
+loki.source.docker "default" {
+  host = "unix:///var/run/docker.sock"
+  targets = discovery.relabel.docker.output
+  forward_to = [loki.relabel.docker.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://{{ hostvars['monitor'].ansible_host }}:3100/loki/api/v1/push"
+  }
+}

@@ -5,7 +5,7 @@ services:
     volumes:
       - ./authelia/config:/config
       - ./authelia/secrets:/secrets
-      - autheliaLogs:/var/log/authelia
+      - /var/log/authelia:/var/log/authelia
     depends_on:
       - "redis"
     restart: unless-stopped
@@ -41,7 +41,7 @@ services:
       - ./traefik/certs:/certs
       - ./traefik/traefik.toml:/etc/traefik/traefik.toml
       - ./traefik/dyn.toml:/etc/traefik/dyn.toml
-      - traefikLogs:/var/log/traefik
+      - /var/log/traefik:/var/log/traefik
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`traefik.hopk.net`)"
@@ -69,8 +69,8 @@ services:
       - ./crowdsec/data:/var/lib/crowdsec/data
       - /var/log/auth.log:/logs/auth.log:ro
       - /var/log/syslog:/logs/syslog:ro
-      - traefikLogs:/logs/traefik
-      - autheliaLogs:/logs/authelia
+      - /var/log/traefik:/logs/traefik
+      - /var/log/authelia:/logs/authelia
     environment:
       - PUID=1000
       - PGID=994
@@ -104,6 +104,3 @@ services:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_INCLUDE_STOPPED=true
     restart: unless-stopped
-volumes:
-  traefikLogs:
-  autheliaLogs:

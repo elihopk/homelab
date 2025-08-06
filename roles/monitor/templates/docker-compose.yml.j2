@@ -43,18 +43,18 @@ services:
     volumes:
       - ./monitor/loki/data:/loki
       - ./monitor/loki/config:/etc/loki
-  promtail:
-    image: grafana/promtail
-    container_name: promtail
-    ports:
-      - 1514:1514
+  alloy:
+    image: grafana/alloy
+    container_name: alloy
+    restart: unless-stopped
     volumes:
+      - ./monitor/alloy/config.alloy:/etc/alloy/config.alloy
       - /var/log:/var/log
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /etc/machine-id:/etc/machine-id:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./monitor/promtail/config.yml:/etc/promtail/config.yml
-    restart: unless-stopped
+    ports:
+      - 1514:1514
   pve_exporter:
     image: prompve/prometheus-pve-exporter:latest
     container_name: pve_exporter
