@@ -18,6 +18,16 @@
       ignore_errors: true
       # noqa ignore-errors
 
+- name: Install Exporters on Hypervisors
+  hosts: proxmox_servers
+  vars:
+    smartctl_exporter_system_user: "root"
+    smartctl_exporter_system_group: "root"
+
+  roles:
+    - prometheus.prometheus.node_exporter
+    - prometheus.prometheus.smartctl_exporter
+
 - name: Configure Media Server
   hosts: media_servers
   vars_files:

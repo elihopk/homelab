@@ -128,7 +128,7 @@ ui:
   # it decreases the privacy, since the browser can records the page titles.
   query_in_title: false
   # infinite_scroll: When true, automatically loads the next page when scrolling to bottom of the current page.
-  infinite_scroll: false
+  infinite_scroll: true
   # ui theme
   default_theme: simple
   # center the results ?
@@ -198,10 +198,10 @@ outgoing:
   # are also supported: see
   #   https://2.python-requests.org/en/latest/user/advanced/#socks
   #
-  proxies:
-    all://:
+  #proxies:
+  #  all://:
     {% for proxy in socks_proxies %}
-      - {{ proxy }}
+  #    - {{ proxy }}
     {% endfor %}
   #   - http://proxy1:8080
   #   - http://proxy2:8080
@@ -353,7 +353,6 @@ engines:
   - name: 9gag
     engine: 9gag
     shortcut: 9g
-    disabled: true
 
   - name: acfun
     engine: acfun
@@ -368,7 +367,6 @@ engines:
     adobe_order: relevance
     adobe_content_types: ["photo", "illustration", "zip_vector", "template", "3d", "image"]
     timeout: 6
-    disabled: true
 
   - name: adobe stock video
     engine: adobe_stock
@@ -378,7 +376,6 @@ engines:
     adobe_order: relevance
     adobe_content_types: ["video"]
     timeout: 6
-    disabled: true
 
   - name: adobe stock audio
     engine: adobe_stock
@@ -388,7 +385,6 @@ engines:
     adobe_order: relevance
     adobe_content_types: ["audio"]
     timeout: 6
-    disabled: true
 
   - name: alexandria
     engine: json_engine
@@ -424,7 +420,6 @@ engines:
 
   - name: annas archive
     engine: annas_archive
-    disabled: true
     shortcut: aa
 
   - name: ansa
@@ -545,7 +540,6 @@ engines:
   - name: bing
     engine: bing
     shortcut: bi
-    disabled: true
 
   - name: bing images
     engine: bing_images
@@ -609,6 +603,7 @@ engines:
   - name: chefkoch
     engine: chefkoch
     shortcut: chef
+    disabled: true
     # to show premium or plus results too:
     # skip_premium: false
 
@@ -672,13 +667,11 @@ engines:
     engine: cppreference
     shortcut: cpp
     paging: false
-    disabled: true
 
   - name: crossref
     engine: crossref
     shortcut: cr
     timeout: 30
-    disabled: true
 
   - name: crowdview
     engine: json_engine
@@ -692,7 +685,6 @@ engines:
     content_query: snippet
     title_html_to_text: true
     content_html_to_text: true
-    disabled: true
     about:
       website: https://crowdview.ai/
 
@@ -742,7 +734,6 @@ engines:
     engine: duckduckgo_definitions
     shortcut: ddd
     weight: 2
-    disabled: true
     tests: *tests_infobox
 
   # cloudflare protected
@@ -819,6 +810,7 @@ engines:
     display_type: ["infobox"]
     tests: *tests_infobox
     categories: [general]
+    disabled: true
 
   - name: duckduckgo
     engine: duckduckgo
@@ -829,21 +821,18 @@ engines:
     categories: [images, web]
     ddg_category: images
     shortcut: ddi
-    disabled: true
 
   - name: duckduckgo videos
     engine: duckduckgo_extra
     categories: [videos, web]
     ddg_category: videos
     shortcut: ddv
-    disabled: true
 
   - name: duckduckgo news
     engine: duckduckgo_extra
     categories: [news, web]
     ddg_category: news
     shortcut: ddn
-    disabled: true
 
   - name: duckduckgo weather
     engine: duckduckgo_weather
@@ -860,13 +849,11 @@ engines:
     engine: emojipedia
     timeout: 4.0
     shortcut: em
-    disabled: true
 
   - name: tineye
     engine: tineye
     shortcut: tin
     timeout: 9.0
-    disabled: true
 
   - name: etymonline
     engine: xpath
@@ -907,7 +894,6 @@ engines:
   - name: findthatmeme
     engine: findthatmeme
     shortcut: ftm
-    disabled: true
 
   - name: flickr
     categories: images
@@ -948,7 +934,6 @@ engines:
     engine: fyyd
     shortcut: fy
     timeout: 8.0
-    disabled: true
 
   - name: geizhals
     engine: geizhals
@@ -994,7 +979,6 @@ engines:
     engine: gitea
     base_url: https://codeberg.org
     shortcut: cb
-    disabled: true
 
   - name: gitea.com
     engine: gitea
@@ -1006,7 +990,6 @@ engines:
     engine: goodreads
     shortcut: good
     timeout: 4.0
-    disabled: true
 
   - name: google
     engine: google
@@ -1047,7 +1030,6 @@ engines:
     categories: [files, apps]
     shortcut: gpa
     play_categ: apps
-    disabled: true
 
   - name: google play movies
     engine: google_play
@@ -1059,7 +1041,6 @@ engines:
   - name: material icons
     engine: material_icons
     shortcut: mi
-    disabled: true
 
   - name: habrahabr
     engine: xpath
@@ -1084,7 +1065,6 @@ engines:
   - name: hackernews
     engine: hackernews
     shortcut: hn
-    disabled: true
 
   - name: hex
     engine: hex
@@ -1144,12 +1124,10 @@ engines:
     engine: imdb
     shortcut: imdb
     timeout: 6.0
-    disabled: true
 
   - name: imgur
     engine: imgur
     shortcut: img
-    disabled: true
 
   - name: ina
     engine: ina
@@ -1170,7 +1148,6 @@ engines:
   - name: ipernity
     engine: ipernity
     shortcut: ip
-    disabled: true
 
   - name: iqiyi
     engine: iqiyi
@@ -1193,6 +1170,7 @@ engines:
       - https://kat.am
     shortcut: kc
     timeout: 4.0
+    disabled: true
 
   - name: lemmy communities
     engine: lemmy
@@ -1247,7 +1225,6 @@ engines:
     engine: loc
     shortcut: loc
     categories: images
-    disabled: true
 
   - name: libretranslate
     engine: libretranslate
@@ -1385,7 +1362,6 @@ engines:
     engine: npm
     shortcut: npm
     timeout: 5.0
-    disabled: true
 
   - name: nyaa
     engine: nyaa
@@ -1560,6 +1536,7 @@ engines:
     categories: videos
     piped_filter: videos
     timeout: 3.0
+    disabled: true
 
     # URL to use as link and for embeds
     frontend_url: https://srv.piped.video
@@ -1587,20 +1564,19 @@ engines:
     # country
     url: https://thepiratebay.org/
     timeout: 3.0
+    disabled: true
 
   - name: pixabay images
     engine: pixabay
     pixabay_type: images
     categories: images
     shortcut: pixi
-    disabled: true
 
   - name: pixabay videos
     engine: pixabay
     pixabay_type: videos
     categories: videos
     shortcut: pixv
-    disabled: true
 
   - name: pixiv
     shortcut: pv
@@ -1738,6 +1714,7 @@ engines:
     shortcut: qwn
     categories: news
     network: qwant
+    disabled: true
 
   - name: qwant images
     qwant_categ: images
@@ -1745,6 +1722,7 @@ engines:
     shortcut: qwi
     categories: [images, web]
     network: qwant
+    disabled: true
 
   - name: qwant videos
     qwant_categ: videos
@@ -1752,6 +1730,7 @@ engines:
     shortcut: qwv
     categories: [videos, web]
     network: qwant
+    disabled: true
 
   # - name: library
   #   engine: recoll
@@ -1783,7 +1762,6 @@ engines:
     engine: reddit
     shortcut: re
     page_size: 25
-    disabled: true
 
   - name: reuters
     engine: reuters
@@ -1812,7 +1790,6 @@ engines:
   - name: rottentomatoes
     engine: rottentomatoes
     shortcut: rt
-    disabled: true
 
   # Required dependency: valkey
   # - name: myvalkey
@@ -1841,7 +1818,6 @@ engines:
     url_xpath: .//a[contains(@class,'result-link')]/@href
     title_xpath: .//span[contains(@class,'result-title-txt')]/text()
     content_xpath: ./p[@id='result-hightlight']
-    disabled: true
     about:
       website: https://searchmysite.net
 
@@ -1902,7 +1878,6 @@ engines:
     shortcut: dpy
     base_url: 'https://discuss.python.org'
     categories: [it, q&a]
-    disabled: true
 
   - name: caddy.community
     engine: discourse
@@ -1921,7 +1896,6 @@ engines:
   - name: searchcode code
     engine: searchcode_code
     shortcut: scc
-    disabled: true
 
   # - name: searx
   #   engine: searx_engine
@@ -1933,7 +1907,6 @@ engines:
 
   - name: semantic scholar
     engine: semantic_scholar
-    disabled: true
     shortcut: se
 
   # Spotify needs API credentials
@@ -1969,23 +1942,25 @@ engines:
     categories: [general, web]
     additional_tests:
       rosebud: *test_rosebud
+    disabled: true
 
   - name: startpage news
     engine: startpage
     startpage_categ: news
     categories: [news, web]
     shortcut: spn
+    disabled: true
 
   - name: startpage images
     engine: startpage
     startpage_categ: images
     categories: [images, web]
     shortcut: spi
+    disabled: true
 
   - name: steam
     engine: steam
     shortcut: stm
-    disabled: true
 
   - name: tokyotoshokan
     engine: tokyotoshokan
@@ -2000,6 +1975,7 @@ engines:
     base_url:
       - https://solidtorrents.to
       - https://bitsearch.to
+    disabled: true
 
   # For this demo of the sqlite engine download:
   #   https://liste.mediathekview.de/filmliste-v2.db.bz2
@@ -2039,7 +2015,6 @@ engines:
     title_xpath: .//div[contains(@class,"title")]//h2
     content_xpath: .//div[contains(@class,"overview")]
     shortcut: tm
-    disabled: true
 
   # Requires Tor
   - name: torch
@@ -2146,6 +2121,7 @@ engines:
   - name: vimeo
     engine: vimeo
     shortcut: vm
+    disabled: true
 
   - name: wiby
     engine: json_engine
@@ -2167,7 +2143,6 @@ engines:
     categories: [general, wikimedia]
     base_url: "https://{language}.wikibooks.org/"
     search_type: text
-    disabled: true
     about:
       website: https://www.wikibooks.org/
       wikidata_id: Q367
@@ -2190,7 +2165,6 @@ engines:
     categories: [general, wikimedia]
     base_url: "https://{language}.wikiquote.org/"
     search_type: text
-    disabled: true
     additional_tests:
       rosebud: *test_rosebud
     about:
@@ -2204,7 +2178,6 @@ engines:
     categories: [general, wikimedia]
     base_url: "https://{language}.wikisource.org/"
     search_type: text
-    disabled: true
     about:
       website: https://www.wikisource.org/
       wikidata_id: Q263
@@ -2215,7 +2188,6 @@ engines:
     categories: [general, science, wikimedia]
     base_url: "https://species.wikimedia.org/"
     search_type: text
-    disabled: true
     about:
       website: https://species.wikimedia.org/
       wikidata_id: Q13679
@@ -2247,7 +2219,6 @@ engines:
     categories: [general, wikimedia]
     base_url: "https://{language}.wikiversity.org/"
     search_type: text
-    disabled: true
     about:
       website: https://www.wikiversity.org/
       wikidata_id: Q370
@@ -2259,7 +2230,6 @@ engines:
     categories: [general, wikimedia]
     base_url: "https://{language}.wikivoyage.org/"
     search_type: text
-    disabled: true
     about:
       website: https://www.wikivoyage.org/
       wikidata_id: Q373
@@ -2428,7 +2398,6 @@ engines:
     suggestion_xpath: /html/body/main/div/div[@class="search__suggestions"]/p/a
     first_page_num: 1
     categories: [it, packages]
-    disabled: true
     about:
       website: https://rubygems.org/
       wikidata_id: Q1853420
@@ -2554,7 +2523,6 @@ engines:
     engine: svgrepo
     shortcut: svg
     timeout: 10.0
-    disabled: true
 
   - name: tootfinder
     engine: tootfinder
@@ -2563,7 +2531,6 @@ engines:
   - name: uxwing
     engine: uxwing
     shortcut: ux
-    disabled: true
 
   - name: voidlinux
     engine: voidlinux
@@ -2649,7 +2616,6 @@ engines:
   - name: lib.rs
     shortcut: lrs
     engine: lib_rs
-    disabled: true
 
   - name: sourcehut
     shortcut: srht
@@ -2698,7 +2664,6 @@ engines:
   - name: pkg.go.dev
     engine: pkg_go_dev
     shortcut: pgo
-    disabled: true
 
   - name: senscritique
     engine: senscritique

@@ -19,9 +19,17 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
   - job_name: 'loki'
+    sample_limit: 100000
+    label_limit: 100
+    label_name_length_limit: 200
+    label_value_length_limit: 512
     static_configs:
       - targets: ['{{ ansible_host }}:3100']
   - job_name: 'grafana'
+    sample_limit: 100000
+    label_limit: 100
+    label_name_length_limit: 200
+    label_value_length_limit: 512
     static_configs:
       - targets: ['{{ ansible_host }}:3000']
   - job_name: 'traefik'
@@ -30,6 +38,15 @@ scrape_configs:
   - job_name: 'crowdsec'
     static_configs:
       - targets: ['{{ hostvars["proxy"]["ansible_host"] }}:6060']
+  - job_name: 'authelia'
+    static_configs:
+      - targets: ['{{ hostvars["proxy"]["ansible_host"] }}:9959']
+  - job_name: 'smartctl'
+    static_configs:
+      - targets:
+{% for host in groups['proxmox_servers'] %}
+        - '{{ hostvars[host]["ansible_host"] }}:9633'
+{% endfor %}
   - job_name: 'proxmox-nodes'
     static_configs:
       - targets:
@@ -71,7 +88,7 @@ scrape_configs:
     label_value_length_limit: 512
     static_configs:
       - targets:
-{% for host in groups['vms'] %}
+{% for host in groups['all'] %}
         - '{{ hostvars[host]["ansible_host"] }}:9100'
 {% endfor %}
   - job_name: 'postgres'

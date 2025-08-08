@@ -54,7 +54,6 @@
         regexp: '^Defaults\s+secure_path='
         line: 'Defaults    secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/bin"'
         validate: 'visudo -cf %s'
-      become: true
 
     - name: Create Config Directory
       ansible.builtin.file:
@@ -107,8 +106,28 @@
         owner: root
         group: root
 
+    - name: Create drop-in directory for borgmatic.service
+      ansible.builtin.file:
+        path: /etc/systemd/system/borgmatic.service.d
+        state: directory
+        mode: "0755"
+
+    - name: Install override to allow writes and add required capabilities
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/borgmatic.service.d/override.conf
+        mode: "0644"
+        content: |
+          [Service]
+          Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/bin
+          # Keep ProtectSystem=full but allow writes here
+          ReadWritePaths=/backup
+          # Add back the capabilities needed for root to create/write under /backup (owned by bkp)
+          CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_RAW CAP_DAC_OVERRIDE CAP_FOWNER CAP_CHOWN
+      notify:
+        - Systemd daemon-reload
+
     - name: Start and Enable borgmatic Timer
       ansible.builtin.systemd_service:
         name: borgmatic.timer
-        state: started
+        state: restarted
         enabled: true

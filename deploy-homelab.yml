@@ -10,6 +10,7 @@
   vars_files:
     - vars/secrets.yml
     - vars/config_vars.yml
+  tags: deploy
   tasks:
 
     - name: Disable Enterprise Repo
@@ -282,6 +283,12 @@
         timeout: 300
       delegate_to: "{{ item }}"
       loop: "{{ groups['vms'] }}"
+
+- name: Install Exporters on Hypervisors
+  hosts: proxmox_servers
+  roles:
+    - prometheus.prometheus.node_exporter
+    - prometheus.prometheus.smartctl_exporter
 
 - name: Configure Media Server
   hosts: media_servers

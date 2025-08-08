@@ -2,6 +2,8 @@ services:
   authelia:
     image: authelia/authelia
     container_name: authelia
+    ports:
+      - 9959:9959
     volumes:
       - ./authelia/config:/config
       - ./authelia/secrets:/secrets

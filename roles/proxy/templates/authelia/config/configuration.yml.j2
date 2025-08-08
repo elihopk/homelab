@@ -142,7 +142,7 @@ telemetry:
   ##
   metrics:
     ## Enable Metrics.
-    enabled: false
+    enabled: true
 
     ## The address for the Metrics server to listen on in the address common syntax.
     ## Formats:
@@ -151,7 +151,7 @@ telemetry:
     ## Square brackets indicate optional portions of the format. Scheme must be 'tcp', 'tcp4', 'tcp6', 'unix', or 'fd'.
     ## The default scheme is 'unix' if the address is an absolute path otherwise it's 'tcp'. The default port is '9959'.
     ## If the path is not specified it defaults to `/metrics`.
-    # address: 'tcp://:9959/metrics'
+    address: 'tcp://:9959/metrics'
 
     ## Metrics Server Buffers configuration.
     # buffers:
@@ -851,6 +851,11 @@ access_control:
       subject:
         - "group:admin"
       policy: two_factor
+
+    - domain: "search.hopk.net"
+      policy: bypass
+      networks:
+        - 10.0.0.0/8
 
     - domain: "search.hopk.net"
       subject:

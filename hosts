@@ -43,7 +43,7 @@ media_servers:
 infrastructure:
   hosts:
     backup:
-      ansible_host: 10.0.1.13
+      ansible_host: 10.0.1.12
       ansible_user: bkp
       config_dest: /etc/borgmatic
       proxmox_host: virt1
@@ -116,6 +116,7 @@ misc:
       proxmox_memory: 2048
       proxmox_cores: 2
       proxmox_disk_size: 10
+      vmid: 204
 
 docker:
   hosts:
