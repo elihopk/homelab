@@ -33,7 +33,7 @@ update-services.yml        # As above + OS/package updates
 docs/                      # Supporting documentation
 roles/                     # Modular roles (platform, apps, monitoring, backups, etc.)
 templates/                 # Shared Jinja templates (e.g., rsyslog)
-vars/                      # Non-secret config
+vars/                      # Non-secret variables
 ```
 
 > **Secrets:** `vars/secrets.yml` and a private SSH key used for backups are intentionally **not** committed.
