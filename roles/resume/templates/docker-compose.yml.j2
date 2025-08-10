@@ -69,16 +69,3 @@ services:
       # -- Email (Optional) --
       DISABLE_SIGNUPS: "false"
       DISABLE_EMAIL_AUTH: "false"
-  watchtower:
-    image: containrrr/watchtower
-    container_name: watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - PUID=1000
-      - PGID=994
-      - TZ=America/New_York
-      - WATCHTOWER_POLL_INTERVAL=86400
-      - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_INCLUDE_STOPPED=true
-    restart: unless-stopped

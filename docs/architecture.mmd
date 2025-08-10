@@ -1,0 +1,84 @@
+%%{init: {
+  "startOnLoad": true,
+  "securityLevel": "loose",
+  "theme": "forest",
+  "flowchart": {
+    "htmlLabels": true,
+    "padding": 15,
+    "rankSpacing": 40,
+    "nodeSpacing": 55,
+    "wrappingWidth": 400
+  },
+  "layout": "elk"
+}}%%
+flowchart LR
+
+%% ===================== WAN =====================
+WAN["🌐 **WAN / Internet**"]
+style WAN fill:#d9ebff,stroke:#004c99,stroke-width:2px,rx:10,ry:10
+
+%% ===================== WireGuard =====================
+WG["🔒 **WireGuard VPN**<br />10.0.4.0/24"]
+style WG fill:#e6e6ff,stroke:#333399,stroke-width:2px,rx:10,ry:10
+
+%% ===================== OPNsense =====================
+OPN["🛡️ **OPNsense**<br />VMID 101 • 10.0.1.254<br/>2 Cores • 4GB RAM • 20GB Disk"]
+style OPN fill:#ffe9db,stroke:#cc5200,stroke-width:2px,rx:10,ry:10
+
+%% WAN to OPNsense (NIC)
+WAN <--> |enp2s0f0| OPN
+
+%% WireGuard to OPNsense (NIC)
+WG <--> |wg0| OPN
+
+%% ===================== TP-Link Router =====================
+AP["📶 **TP-Link Router (AP mode)**<br />10.0.2.253"]
+style AP fill:#fff6dd,stroke:#cc9900,stroke-width:2px,rx:10,ry:10
+OPN --> |enp0s31f6| AP
+
+%% ===================== Subnets (Aligned Row) =====================
+SUB_LAN["🟪 **Main Subnet**<br/>10.0.2.0/24"]
+style SUB_LAN fill:#f4ebff,stroke:#663399,stroke-width:2px,rx:10,ry:10
+
+SUB_IOT["🟩 **IoT Subnet**<br/>10.0.3.0/24"]
+style SUB_IOT fill:#e6ffe6,stroke:#1f7a1f,stroke-width:2px,rx:10,ry:10
+
+SUB_SRV["🟦 **Server Subnet**<br/>10.0.1.0/24"]
+style SUB_SRV fill:#e6f3ff,stroke:#004c99,stroke-width:2px,rx:10,ry:10
+
+AP --> SUB_LAN
+AP --> SUB_IOT
+AP --> SUB_SRV
+
+%% ===================== Proxmox Hosts =====================
+subgraph VIRT1["🟧 virt1 • 10.0.1.1"]
+  style VIRT1 fill:#fff4e8,stroke:#d97a00,stroke-width:2px,rx:10,ry:10
+  OPN
+  V1_PROXY["🖥️ **proxy**<br />VMID 102 • 10.0.1.11<br/>2 Cores • 2GB RAM • 10GB Disk<br/>Docker - Traefik, Authelia, CrowdSec, Redis, Postfix"]
+  V1_BACKUP["💾 **backup**<br />VMID 103 • 10.0.1.12<br/>2 Cores • 2GB RAM • 50GB Disk<br/>Bare Metal - borg, borgmatic (pulls via rsync)"]
+end
+
+subgraph VIRT2["🟥 virt2 • 10.0.1.2"]
+  style VIRT2 fill:#ffeaea,stroke:#cc0000,stroke-width:2px,rx:10,ry:10
+  V2_MEDIA1["🎬 **media1**<br />VMID 201 • 10.0.1.21<br/>4 Cores • 16GB RAM • 7TB Disk<br/>Docker - Bazarr, Radarr, Sonarr, Prowlarr, Plex, Jellyseerr, Tautulli, SabNZBD, DelugeVPN"]
+  V2_DB1["🗄️ **db1**<br />VMID 202 • 10.0.1.22<br/>4 Cores • 8GB RAM • 100G Disk<br/>Bare Metal - PostgreSQL"]
+  V2_NEXTCLOUD["☁️ **nextcloud**<br />VMID 203 • 10.0.1.23<br/>2 Cores • 4GB RAM • 1TB Disk<br/>Docker - Nextcloud, Collabora, Nextcloud Whiteboard, Redis"]
+  V2_SEARCH["🔎 **search**<br />VMID 204 • 10.0.1.24<br/>2 Cores • 2GB RAM • 10GB Disk<br/>Docker - SearXNG, Valkey"]
+  V2_MON["📊 **monitor**<br />VMID 205 • 10.0.1.25<br/>2 Cores • 8GB RAM • 100GB Disk<br/>Docker - Grafana, Prometheus, Loki, pve-exporter"]
+end
+
+subgraph VIRT3["🟩 virt3 • 10.0.1.3"]
+  style VIRT3 fill:#ecfbec,stroke:#1f7a1f,stroke-width:2px,rx:10,ry:10
+  V3_VW["🔐 **vaultwarden**<br />VMID 301 • 10.0.1.31<br/>1 Core • 1GB RAM • 10GB Disk<br/>Docker - VaultWarden"]
+  V3_BUDGET["💸 **budget**<br />VMID 302 • 10.0.1.32<br/>1 Core • 2GB RAM • 20GB Disk<br/>Docker - Actual Budget"]
+  V3_RESUME["📄 **resume**<br />VMID 303 • 10.0.1.33<br/>1 Core • 1GB RAM • 20GB Disk<br/>Docker - Reactive Resume, MinIO, Browserless Chromium"]
+end
+
+%% ===================== Server Subnet Connections =====================
+SUB_SRV --> |enp0s31f6| VIRT1
+SUB_SRV --> |enp3s0| VIRT2
+SUB_SRV --> |eno1| VIRT3
+
+%% ===================== Global Services =====================
+LEGEND["🌎 **Global Services**<br/>• All VMs & Proxmox:<br />Bare Metal - node_exporter<br/>• Docker hosts:<br />Docker - watchtower, alloy<br />Bare Metal - cAdvisor<br/>• Non-docker hosts:<br />Bare Metal - rsyslog"]
+style LEGEND fill:#fffbe6,stroke:#b38f00,stroke-width:1px,rx:6,ry:6

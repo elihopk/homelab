@@ -12,13 +12,3 @@ services:
       - '5006:5006'
     volumes:
       - ./actual:/data
-  watchtower:
-    image: containrrr/watchtower
-    container_name: watchtower
-    environment:
-      - PUID=1000
-      - PGID=994
-      - TZ=America/New_York
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
