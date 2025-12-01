@@ -1,6 +1,6 @@
 services:
   authelia:
-    image: authelia/authelia
+    image: authelia/authelia:latest
     container_name: authelia
     ports:
       - 9959:9959
@@ -10,6 +10,7 @@ services:
       - /var/log/authelia:/var/log/authelia
     depends_on:
       - "redis"
+      - "postfix"
     restart: unless-stopped
     environment:
       - TZ=America/New_York
@@ -27,7 +28,7 @@ services:
       - "traefik.http.middlewares.cors.headers.customResponseHeaders.Access-Control-Allow-Credentials=true"
       - "traefik.http.routers.authelia.middlewares=crowdsec@file, cors"
   traefik:
-    image: traefik
+    image: traefik:latest
     container_name: traefik
     ports:
       - 80:80

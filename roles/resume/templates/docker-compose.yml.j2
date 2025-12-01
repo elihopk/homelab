@@ -19,7 +19,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      TIMEOUT: 10000
+      TIMEOUT: 120000
       CONCURRENT: 10
       TOKEN: {{ chrome_token }}
       EXIT_ON_HEALTH_FAILURE: "true"

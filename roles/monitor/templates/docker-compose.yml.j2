@@ -1,6 +1,6 @@
 services:
   grafana:
-    image: grafana/grafana-enterprise
+    image: grafana/grafana-enterprise:latest
     container_name: grafana
     restart: unless-stopped
     ports:
@@ -31,7 +31,7 @@ services:
       - ./monitor/prometheus/data:/prometheus
       - ./monitor/prometheus/config:/prometheus
   loki:
-    image: grafana/loki
+    image: grafana/loki:latest
     container_name: loki
     restart: unless-stopped
     ports:
@@ -44,7 +44,7 @@ services:
       - ./monitor/loki/data:/loki
       - ./monitor/loki/config:/etc/loki
   alloy:
-    image: grafana/alloy
+    image: grafana/alloy:latest
     container_name: alloy
     restart: unless-stopped
     volumes:

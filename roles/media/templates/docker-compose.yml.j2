@@ -1,6 +1,6 @@
 services:
   bazarr:
-    image: ghcr.io/linuxserver/bazarr
+    image: ghcr.io/linuxserver/bazarr:latest
     container_name: bazarr
     environment:
       - PUID=1000
@@ -17,7 +17,7 @@ services:
       - ./library/TV:/tv
     restart: unless-stopped
   radarr:
-    image: ghcr.io/linuxserver/radarr
+    image: ghcr.io/linuxserver/radarr:latest
     container_name: radarr
     environment:
       - PUID=1000
@@ -37,7 +37,7 @@ services:
       - ./downloads/nzb/incomplete:/incomplete-downloads
     restart: unless-stopped
   sonarr:
-    image: ghcr.io/linuxserver/sonarr
+    image: ghcr.io/linuxserver/sonarr:latest
     container_name: sonarr
     environment:
       - PUID=1000
@@ -57,7 +57,7 @@ services:
       - ./downloads/nzb/incomplete:/incomplete-downloads
     restart: unless-stopped
   deluge:
-    image: binhex/arch-delugevpn
+    image: binhex/arch-delugevpn:latest
     container_name: deluge
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
@@ -94,7 +94,7 @@ services:
     restart: unless-stopped
   plex:
     container_name: plex
-    image: plexinc/pms-docker
+    image: plexinc/pms-docker:latest
     restart: unless-stopped
     devices:
       - /dev/dri:/dev/dri
@@ -111,7 +111,7 @@ services:
       - ./plex/transcode:/transcode
       - ./library:/library
   jellyseerr:
-    image: fallenbagel/jellyseerr
+    image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
     environment:
       - PUID=1000
@@ -128,7 +128,7 @@ services:
       - ./jellyseerr:/app/config
     restart: unless-stopped
   tautulli:
-    image: ghcr.io/linuxserver/tautulli
+    image: ghcr.io/linuxserver/tautulli:latest
     container_name: tautulli
     environment:
       - PUID=1000

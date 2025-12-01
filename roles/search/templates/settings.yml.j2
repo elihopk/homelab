@@ -734,7 +734,9 @@ engines:
     engine: duckduckgo_definitions
     shortcut: ddd
     weight: 2
+    timeout: 3.0
     tests: *tests_infobox
+    disabled: true
 
   # cloudflare protected
   # - name: digbt
@@ -815,28 +817,38 @@ engines:
   - name: duckduckgo
     engine: duckduckgo
     shortcut: ddg
+    timeout: 3.0
+    disabled: true
 
   - name: duckduckgo images
     engine: duckduckgo_extra
     categories: [images, web]
     ddg_category: images
     shortcut: ddi
+    timeout: 3.0
+    disabled: true
 
   - name: duckduckgo videos
     engine: duckduckgo_extra
     categories: [videos, web]
     ddg_category: videos
     shortcut: ddv
+    timeout: 3.0
+    disabled: true
 
   - name: duckduckgo news
     engine: duckduckgo_extra
     categories: [news, web]
     ddg_category: news
     shortcut: ddn
+    timeout: 3.0
+    disabled: true
 
   - name: duckduckgo weather
     engine: duckduckgo_weather
     shortcut: ddw
+    disabled: true
+    timeout: 3.0
     disabled: true
 
   - name: apple maps

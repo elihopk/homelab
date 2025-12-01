@@ -92,7 +92,7 @@
 
     - name: Download borgmatic Service
       ansible.builtin.get_url:
-        url: https://projects.torsion.org/borgmatic-collective/borgmatic/raw/branch/main/sample/systemd/borgmatic.service
+        url: https://raw.githubusercontent.com/borgmatic-collective/borgmatic/refs/heads/main/sample/systemd/borgmatic.service
         dest: /etc/systemd/system/borgmatic.service
         mode: "0644"
         owner: root
@@ -100,7 +100,7 @@
 
     - name: Download borgmatic Timer
       ansible.builtin.get_url:
-        url: https://projects.torsion.org/borgmatic-collective/borgmatic/raw/branch/main/sample/systemd/borgmatic.timer
+        url: https://raw.githubusercontent.com/borgmatic-collective/borgmatic/refs/heads/main/sample/systemd/borgmatic.timer
         dest: /etc/systemd/system/borgmatic.timer
         mode: "0644"
         owner: root

@@ -1,6 +1,6 @@
 services:
   alloy:
-    image: grafana/alloy
+    image: grafana/alloy:latest
     container_name: alloy
     restart: unless-stopped
     volumes:
@@ -11,7 +11,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
   watchtower:
-    image: containrrr/watchtower
+    image: ghcr.io/nicholas-fedor/watchtower:latest
     container_name: watchtower
     environment:
       - PUID=1000

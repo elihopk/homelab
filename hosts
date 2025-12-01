@@ -49,7 +49,7 @@ infrastructure:
       proxmox_host: virt1
       proxmox_memory: 2048
       proxmox_cores: 2
-      proxmox_disk_size: 50
+      proxmox_disk_size: 100
       vmid: 103
     proxy:
       ansible_host: 10.0.1.11
@@ -58,7 +58,7 @@ infrastructure:
       proxmox_host: virt1
       proxmox_memory: 2048
       proxmox_cores: 2
-      proxmox_disk_size: 10
+      proxmox_disk_size: 30
       vmid: 102
     nextcloud:
       ansible_host: 10.0.1.23
@@ -88,7 +88,7 @@ misc:
       proxmox_host: virt3
       proxmox_memory: 1024
       proxmox_cores: 1
-      proxmox_disk_size: 10
+      proxmox_disk_size: 20
       vmid: 301
     budget:
       ansible_host: 10.0.1.32
@@ -104,8 +104,8 @@ misc:
       config_dest: /home/res/resume
       ansible_user: res
       proxmox_host: virt3
-      proxmox_memory: 1024
-      proxmox_cores: 1
+      proxmox_memory: 2048
+      proxmox_cores: 2
       proxmox_disk_size: 20
       vmid: 303
     search:
@@ -115,7 +115,7 @@ misc:
       proxmox_host: virt2
       proxmox_memory: 2048
       proxmox_cores: 2
-      proxmox_disk_size: 10
+      proxmox_disk_size: 30
       vmid: 204
 
 docker:

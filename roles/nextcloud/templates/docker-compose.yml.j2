@@ -21,7 +21,7 @@ services:
       - POSTGRES_HOST={{ hostvars['db1'].ansible_host }}
       - REDIS_HOST=redis
   collabora:
-    image: collabora/code
+    image: collabora/code:latest
     container_name: collabora
     restart: unless-stopped
     environment:
