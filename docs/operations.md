@@ -16,6 +16,11 @@ ansible-playbook homelab-services.yml
 ansible-playbook update-services.yml
 ```
 
+#### With no reboot
+```bash
+ansible-playbook update-services.yml -e reboot=false
+```
+
 ---
 
 ## Targeting Hosts/Groups

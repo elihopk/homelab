@@ -195,5 +195,6 @@
     - name: Reboot hypervisors
       ansible.builtin.reboot:
         reboot_timeout: 1
+      when: reboot | default(true) | bool
       ignore_errors: true
       # noqa ignore-errors

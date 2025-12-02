@@ -94,3 +94,15 @@ services:
       - RELAYHOST=smtp.gmail.com:587
       - RELAYHOST_USERNAME=hopknetrelay@gmail.com
       - RELAYHOST_PASSWORD={{ relayhost_password }}
+
+  logrotate:
+    image: blacklabelops/logrotate
+    container_name: logrotate
+    restart: unless-stopped
+    volumes:
+      - /var/log/authelia:/var/log/authelia
+      - /var/log/traefik:/var/log/traefik
+    environment:
+      - TZ=America/New_York
+      - LOGS_DIRECTORIES=/var/log/authelia /var/log/traefik
+      - LOGROTATE_COMPRESSION=compress
