@@ -57,6 +57,7 @@
 
 - name: Create Alloy Compose
   when: inventory_hostname != "monitor"
+  become: true
   block:
     - name: Create Alloy Directory
       ansible.builtin.file:

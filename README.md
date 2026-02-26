@@ -203,3 +203,10 @@ ansible-playbook update-services.yml
 - **Operational maturity**: clear separation between bootstrap, service re-apply, and update flows.
 - **Defense-in-depth**: identity-aware edge, explicit allowlists, least-privilege service units, and passwordless SSH.
 
+---
+
+## Known Issues
+
+- Actual Budget's bank integration does not refresh properly.
+- media1 may fail to boot following an update. The solution is to switch to UEFI mode and add an EFI disk in Proxmox. This seems to be due to a combination of Legacy BIOS, GPT, and large disk size as the issue does not occur in other VMs.
+

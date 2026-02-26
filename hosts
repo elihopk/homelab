@@ -106,7 +106,7 @@ misc:
       proxmox_host: virt3
       proxmox_memory: 2048
       proxmox_cores: 2
-      proxmox_disk_size: 20
+      proxmox_disk_size: 30
       vmid: 303
     search:
       ansible_host: 10.0.1.24
