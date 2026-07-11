@@ -5,6 +5,7 @@ services:
     environment:
       - ACTUAL_HTTPS_KEY=/data/selfhost.key
       - ACTUAL_HTTPS_CERT=/data/selfhost.crt
+      - DEBUG=actual:config
       - PUID=1000
       - PGID=994
       - TZ=America/New_York
@@ -12,3 +13,4 @@ services:
       - '5006:5006'
     volumes:
       - ./actual:/data
+    restart: unless-stopped

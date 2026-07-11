@@ -30,7 +30,7 @@
         owner: 1000
         group: 994
 
-    - name: Copy acquis.yaml
+    - name: Copy Docker Compose
       ansible.builtin.copy:
         src: "docker-compose.yml"
         dest: "/home/{{ ansible_user }}/docker-compose.yml"

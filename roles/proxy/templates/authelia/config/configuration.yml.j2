@@ -995,11 +995,11 @@ session:
       ## The inactivity time before the session is reset. If expiration is set to 1h, and this is set to 5m, if the user
       ## does not select the remember me option their session will get destroyed after 1h, or after 5m since the last
       ## time Authelia detected user activity.
-      inactivity: '5 minutes'
+      inactivity: '1 hour'
 
       ## The time before the session cookie expires and the session is destroyed if remember me IS NOT selected by the
       ## user.
-      expiration: '1 hour'
+      expiration: '8 hour'
 
       ## The time before the cookie expires and the session is destroyed if remember me IS selected by the user. Setting
       ## this value to -1 disables remember me for this session cookie domain. If allowed and the user uses the remember
