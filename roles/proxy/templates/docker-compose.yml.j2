@@ -39,6 +39,8 @@ services:
       - PUID=1000
       - PGID=994
       - TZ=America/New_York
+      - NAMECHEAP_API_USER={{ namecheap_api_user }}
+      - NAMECHEAP_API_KEY={{ namecheap_api_key }}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik/certs:/certs

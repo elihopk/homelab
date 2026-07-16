@@ -23,9 +23,12 @@
 [certificatesResolvers.le.acme]
   email = "{{ owner_email }}"
   storage = "/certs/acme.json"
-  caServer = "https://acme-v02.api.letsencrypt.org/directory"
-  [certificatesResolvers.le.acme.httpChallenge]
-    entryPoint = "http"
+  [certificatesResolvers.le.acme.dnsChallenge]
+    provider = "namecheap"
+    resolvers = [
+      "8.8.8.8:53",
+      "8.8.4.4:53"
+    ]
 [experimental.plugins]
   [experimental.plugins.bouncer]
     moduleName = "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
