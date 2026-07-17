@@ -30,6 +30,18 @@
       middlewares = ["https-redirect", "crowdsec", "authelia"]
 
   [http.routers]
+    # Wildcard
+    [http.routers.wildcard]
+      rule = "Host(`cert.hopk.net`)"
+      entryPoints = ["https"]
+      service = "noop@internal"
+      [http.routers.wildcard.tls]
+        certResolver = "le"
+        [[http.routers.wildcard.tls.domains]]
+          main = "hopk.net"
+          sans = ["*.hopk.net"]
+
+    # Bazarr
     [http.routers.bazarr]
       rule = "Host(`bazarr.hopk.net`)"
       entryPoints = ["http"]
@@ -41,7 +53,6 @@
       service = "bazarr"
       middlewares = ["chain-authelia"]
       [http.routers.bazarr-https.tls]
-        certResolver = "le"
 
     # Radarr
     [http.routers.radarr]
@@ -55,7 +66,6 @@
       service = "radarr"
       middlewares = ["chain-authelia"]
       [http.routers.radarr-https.tls]
-        certResolver = "le"
 
     # Sonarr
     [http.routers.sonarr]
@@ -69,7 +79,6 @@
       service = "sonarr"
       middlewares = ["chain-authelia"]
       [http.routers.sonarr-https.tls]
-        certResolver = "le"
 
     # Deluge
     [http.routers.deluge]
@@ -83,7 +92,6 @@
       service = "deluge"
       middlewares = ["chain-authelia"]
       [http.routers.deluge-https.tls]
-        certResolver = "le"
 
     # Prowlarr
     [http.routers.prowlarr]
@@ -97,7 +105,6 @@
       service = "prowlarr"
       middlewares = ["chain-authelia"]
       [http.routers.prowlarr-https.tls]
-        certResolver = "le"
 
     # Plex
     [http.routers.plex]
@@ -111,7 +118,6 @@
       service = "plex"
       middlewares = ["crowdsec"]
       [http.routers.plex-https.tls]
-        certResolver = "le"
 
     # Overseerr
     [http.routers.overseerr]
@@ -125,7 +131,6 @@
       service = "overseerr"
       middlewares = ["crowdsec"]
       [http.routers.overseerr-https.tls]
-        certResolver = "le"
 
     # Tautulli
     [http.routers.tautulli]
@@ -139,7 +144,6 @@
       service = "tautulli"
       middlewares = ["chain-authelia"]
       [http.routers.tautulli-https.tls]
-        certResolver = "le"
 
     # SABnzbd
     [http.routers.sabnzbd]
@@ -153,7 +157,6 @@
       service = "sabnzbd"
       middlewares = ["chain-authelia"]
       [http.routers.sabnzbd-https.tls]
-        certResolver = "le"
 
     # VaultWarden
     [http.routers.vw]
@@ -167,7 +170,6 @@
       service = "vw"
       middlewares = ["chain-authelia"]
       [http.routers.vw-https.tls]
-        certResolver = "le"
 
     # Budget
     [http.routers.budget]
@@ -181,7 +183,6 @@
       service = "budget"
       middlewares = ["chain-authelia"]
       [http.routers.budget-https.tls]
-        certResolver = "le"
 
     # Proxmox
     [http.routers.virt]
@@ -195,7 +196,6 @@
       service = "virt"
       middlewares = ["chain-authelia"]
       [http.routers.virt-https.tls]
-        certResolver = "le"
 
     # NextCloud
     [http.routers.nc]
@@ -209,7 +209,6 @@
       service = "nc"
       middlewares = ["crowdsec", "hsts-headers"]
       [http.routers.nc-https.tls]
-        certResolver = "le"
 
     # Collabora
     [http.routers.office]
@@ -223,7 +222,6 @@
       service = "office"
       middlewares = ["crowdsec", "ws-headers"]
       [http.routers.office-https.tls]
-        certResolver = "le"
 
     # NextCloud Whiteboard
     [http.routers.ncwb]
@@ -237,7 +235,6 @@
       service = "ncwb"
       middlewares = ["crowdsec", "ws-headers"]
       [http.routers.ncwb-https.tls]
-        certResolver = "le"
       
     # Resume
     [http.routers.resume]
@@ -251,7 +248,6 @@
       service = "resume"
       middlewares = ["chain-authelia"]
       [http.routers.resume-https.tls]
-        certResolver = "le"
 
     # Resume S3
     [http.routers.s3]
@@ -265,7 +261,6 @@
       service = "s3"
       middlewares = ["chain-authelia"]
       [http.routers.s3-https.tls]
-        certResolver = "le"
 
     # Search
     [http.routers.search]
@@ -279,7 +274,6 @@
       service = "search"
       middlewares = ["chain-authelia"]
       [http.routers.search-https.tls]
-        certResolver = "le"
 
     # Monitor
     [http.routers.monitor]
@@ -293,7 +287,6 @@
       service = "monitor"
       middlewares = ["chain-authelia"]
       [http.routers.monitor-https.tls]
-        certResolver = "le"
 
 
   [http.services]
