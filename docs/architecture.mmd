@@ -54,7 +54,7 @@ AP --> SUB_SRV
 subgraph VIRT1["🟧 virt1 • 10.0.1.1"]
   style VIRT1 fill:#fff4e8,stroke:#d97a00,stroke-width:2px,rx:10,ry:10
   OPN
-  V1_PROXY["🖥️ **proxy**<br />VMID 102 • 10.0.1.11<br/>2 Cores • 2GB RAM • 10GB Disk<br/>Docker - Traefik, Authelia, CrowdSec, Redis, Postfix"]
+  V1_PROXY["🖥️ **proxy**<br />VMID 102 • 10.0.1.11<br/>2 Cores • 2GB RAM • 10GB Disk<br/>Docker - Traefik, Authelia, CrowdSec, Redis, Maddy"]
   V1_BACKUP["💾 **backup**<br />VMID 103 • 10.0.1.12<br/>2 Cores • 2GB RAM • 50GB Disk<br/>Bare Metal - borg, borgmatic (pulls via rsync)"]
 end
 
@@ -62,7 +62,7 @@ subgraph VIRT2["🟥 virt2 • 10.0.1.2"]
   style VIRT2 fill:#ffeaea,stroke:#cc0000,stroke-width:2px,rx:10,ry:10
   V2_MEDIA1["🎬 **media1**<br />VMID 201 • 10.0.1.21<br/>4 Cores • 16GB RAM • 7TB Disk<br/>Docker - Bazarr, Radarr, Sonarr, Prowlarr, Plex, Jellyseerr, Tautulli, SabNZBD, DelugeVPN"]
   V2_DB1["🗄️ **db1**<br />VMID 202 • 10.0.1.22<br/>4 Cores • 8GB RAM • 100G Disk<br/>Bare Metal - PostgreSQL"]
-  V2_NEXTCLOUD["☁️ **nextcloud**<br />VMID 203 • 10.0.1.23<br/>2 Cores • 4GB RAM • 1TB Disk<br/>Docker - Nextcloud, Collabora, Nextcloud Whiteboard, Redis"]
+  V2_OWNCLOUD["☁️ **ownCloud Infinite Scale**<br />VMID 203 • 10.0.1.23<br/>2 Cores • 4GB RAM • 1TB Disk<br/>Docker - oCIS"]
   V2_SEARCH["🔎 **search**<br />VMID 204 • 10.0.1.24<br/>2 Cores • 2GB RAM • 10GB Disk<br/>Docker - SearXNG, Valkey"]
   V2_MON["📊 **monitor**<br />VMID 205 • 10.0.1.25<br/>2 Cores • 8GB RAM • 100GB Disk<br/>Docker - Grafana, Prometheus, Loki, pve-exporter"]
 end

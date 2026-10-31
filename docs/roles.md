@@ -13,7 +13,7 @@ Modular Ansible roles keep configuration clear, testable, and reusable.
 | `monitor`   | Central metrics/logs stack: configs, storage, and UI.                                         |
 | `backup`    | Backup tooling, templated config, `systemd` unit/timer, key distribution.                     |
 | `media`     | Content management/automation stack (hardware accel enabled).                                 |
-| `nextcloud` | Collaboration/document cloud stack with storage/cache layers.                                 |
+| `owncloud` | ownCloud Infinite Scale with persistent storage, Collabora WOPI integration, and compose.        |
 | `search`    | Private search/metasearch stack.                                                              |
 | `vaultwarden`| Personal secrets vault stack.                                                                |
 | `budget`    | Finance management stack.                                           |

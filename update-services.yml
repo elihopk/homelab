@@ -66,12 +66,12 @@
   roles:
     - backup
 
-- name: Configure NextCloud Server
-  hosts: nextcloud
+- name: Configure OwnCloud Server
+  hosts: owncloud
   vars_files:
     - vars/secrets.yml
   roles:
-    - nextcloud
+    - owncloud
 
 - name: Configure Actual Server
   hosts: budget

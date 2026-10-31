@@ -862,7 +862,7 @@ access_control:
         - "group:admin"
       policy: two_factor
 
-    - domain: "nc.hopk.net"
+    - domain: "oc.hopk.net"
       policy: bypass
 
     - domain: "office.hopk.net"
@@ -1320,17 +1320,17 @@ notifier:
   ##     (configure in tls section)
   smtp:
     ## The address of the SMTP server to connect to in the address common syntax.
-    address: 'smtp://10.0.1.11:587'
+    address: 'smtp://smtp.hopk.net:587'
 
     ## The connection timeout in the duration common syntax.
     # timeout: '5 seconds'
 
     ## The username used for SMTP authentication.
-    # username: 'test'
+    username: 'relay@hopk.net'
 
     ## The password used for SMTP authentication.
     ## Can also be set using a secret: https://www.authelia.com/c/secrets
-    # password: 'password'
+    password: '{{ smtp_relay_password }}'
 
     ## The sender is used to is used for the MAIL FROM command and the FROM header.
     ## If this is not defined and the username is an email, we use the username as this value. This can either be just

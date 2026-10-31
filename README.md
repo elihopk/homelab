@@ -103,7 +103,7 @@ vars/                      # Non-secret variables
 - **`monitor`** — Metrics/logs stack: directories, configs (templated), and compose.
 - **`backup`** — Backup tool install via isolated runtime, config render, systemd unit/timer, capability scoping for backup paths.
 - **`media`** — General content-management/automation stack with optional hardware acceleration; network module prerequisites.
-- **`nextcloud`** — General document cloud/collab suite: storage dirs, server config (templated), cache service, compose.
+- **`owncloud`** — ownCloud Infinite Scale: persistent config/data, initialized admin account, Collabora WOPI integration, and compose.
 - **`search`** — Private search/metasearch stack: settings and compose.
 - **`vaultwarden`** — Personal secrets vault stack with compose.
 - **`budget`** — Personal finance stack: self-signed TLS for local use and compose.
@@ -113,7 +113,7 @@ vars/                      # Non-secret variables
 ## Configuration
 
 - **Inventory (`hosts`)**: Hypervisors are listed with static addresses; VM hostnames are grouped by function.  
-  Service plays target groups/hosts such as: `media_servers`, `proxy`, `db_servers`, `backup`, `nextcloud`, `budget`, `resume`, `search`, `monitor`, and a `docker` group.
+  Service plays target groups/hosts such as: `media_servers`, `proxy`, `db_servers`, `backup`, `owncloud`, `budget`, `resume`, `search`, `monitor`, and a `docker` group.
 
 - **Variables (`vars/config_vars.yml`)**: Non-secret runtime settings (owner identity, allowlists, endpoints, etc.).  
   **Secrets** live in a **redacted** file (`vars/secrets.yml`)

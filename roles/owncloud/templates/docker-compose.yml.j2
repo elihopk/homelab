@@ -1,0 +1,116 @@
+services:
+  ocis:
+    image: owncloud/ocis:latest
+    container_name: ocis
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        if [ ! -f /etc/ocis/ocis.yaml ]; then
+          ocis init --insecure false
+        fi;
+        exec ocis server
+    ports:
+      - "{{ ansible_host }}:9200:9200"
+    volumes:
+      - "{{ config_dest }}/config:/etc/ocis"
+      - "{{ config_dest }}/data:/var/lib/ocis"
+    environment:
+      OCIS_URL: https://oc.hopk.net
+      OCIS_CONFIG_DIR: /etc/ocis
+      OCIS_BASE_DATA_PATH: /var/lib/ocis
+      WEB_ASSET_APPS_PATH: /var/lib/ocis/web/assets/apps
+      OCIS_LOG_LEVEL: info
+      OCIS_INSECURE: "false"
+      PROXY_HTTP_ADDR: 0.0.0.0:9200
+      PROXY_TLS: "false"
+      PROXY_FORCE_STRICT_TRANSPORT_SECURITY: "true"
+      PROXY_CSP_CONFIG_FILE_LOCATION: /etc/ocis/csp.yaml
+      GATEWAY_GRPC_ADDR: 0.0.0.0:9142
+      NATS_NATS_HOST: 0.0.0.0
+      NATS_NATS_PORT: "9233"
+      IDM_ADMIN_PASSWORD: "{{ ocis_admin_password }}"
+      OCIS_ADD_RUN_SERVICES: notifications
+      NOTIFICATIONS_SMTP_HOST: smtp.hopk.net
+      NOTIFICATIONS_SMTP_PORT: "587"
+      NOTIFICATIONS_SMTP_SENDER: "ownCloud <noreply@hopk.net>"
+      NOTIFICATIONS_SMTP_USERNAME: "relay@hopk.net"
+      NOTIFICATIONS_SMTP_PASSWORD: "{{ smtp_relay_password }}"
+      NOTIFICATIONS_SMTP_AUTHENTICATION: plain
+      NOTIFICATIONS_SMTP_ENCRYPTION: starttls
+      NOTIFICATIONS_SMTP_INSECURE: "false"
+      OCIS_JWT_SECRET: "{{ ocis_jwt_secret }}"
+      FRONTEND_APP_HANDLER_SECURE_VIEW_APP_ADDR: com.owncloud.api.collaboration.Collabora
+      GRAPH_AVAILABLE_ROLES: "b1e2218d-eef8-4d4c-b82d-0f1a1b48f3b5,a8d5fe5e-96e3-418d-825b-534dbdf22b99,fb6c3e19-e378-47e5-b277-9732f9de6e21,58c63c02-1d89-4572-916a-870abc5a1b7d,2d00ce52-1fc2-4dbc-8b95-a73b73395f5a,1c996275-f1c9-4e71-abdf-a42f6495e960,312c0871-5ef7-4b3a-85b6-0e4074c64049,aa97fe03-7980-45ac-9e50-b325749fd7e6"
+  collaboration:
+    image: owncloud/ocis:latest
+    container_name: ocis-collaboration
+    restart: unless-stopped
+    command: ["collaboration", "server"]
+    depends_on:
+      ocis:
+        condition: service_started
+      collabora:
+        condition: service_healthy
+    volumes:
+      - "{{ config_dest }}/config:/etc/ocis:ro"
+    environment:
+      OCIS_URL: https://oc.hopk.net
+      OCIS_CONFIG_DIR: /etc/ocis
+      OCIS_JWT_SECRET: "{{ ocis_jwt_secret }}"
+      OCIS_REVA_GATEWAY: com.owncloud.api.gateway
+      MICRO_REGISTRY: nats-js-kv
+      MICRO_REGISTRY_ADDRESS: ocis:9233
+      COLLABORATION_GRPC_ADDR: 0.0.0.0:9301
+      COLLABORATION_HTTP_ADDR: 0.0.0.0:9300
+      COLLABORATION_WOPI_SRC: http://collaboration:9300
+      COLLABORATION_WOPI_SECRET: "{{ collaboration_wopi_secret }}"
+      COLLABORATION_APP_NAME: Collabora
+      COLLABORATION_APP_PRODUCT: Collabora
+      COLLABORATION_APP_ADDR: https://office.hopk.net
+      COLLABORATION_APP_ICON: https://office.hopk.net/favicon.ico
+      COLLABORATION_APP_INSECURE: "false"
+      COLLABORATION_CS3API_DATAGATEWAY_INSECURE: "false"
+  collabora:
+    image: collabora/code:latest
+    container_name: collabora
+    restart: unless-stopped
+    depends_on:
+      collabora-proof-key-init:
+        condition: service_completed_successfully
+    ports:
+      - "{{ ansible_host }}:9980:9980"
+    environment:
+      username: admin
+      password: "{{ collabora_password }}"
+      aliasgroup1: "http://collaboration:9300"
+      extra_params: >-
+        --o:ssl.enable=true
+        --o:ssl.termination=true
+        --o:welcome.enable=false
+        --o:net.frame_ancestors=https://oc.hopk.net
+    volumes:
+      - "{{ config_dest }}/collabora/proof_key:/etc/coolwsd/proof_key:ro"
+    cap_add:
+      - MKNOD
+    healthcheck:
+      test: ["CMD", "/usr/bin/coolwsd", "--probe"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+  collabora-proof-key-init:
+    image: alpine/openssl:latest
+    user: root
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        if [ -e /keys/proof_key ] && ! openssl rsa -in /keys/proof_key -check -noout >/dev/null 2>&1; then
+          echo "/keys/proof_key is invalid; regenerating" >&2
+          rm -rf /keys/proof_key
+        fi
+        if [ ! -f /keys/proof_key ]; then
+          openssl genrsa -out /keys/proof_key 2048
+          chmod 644 /keys/proof_key
+        fi
+    volumes:
+      - "{{ config_dest }}/collabora:/keys"

@@ -1,14 +1,14 @@
 galaxy_info:
   author: Eli Hopkins
-  description: Deploy NextCloud Stack
+  description: Deploy ownCloud Infinite Scale
   license: ""
   min_ansible_version: ""
   platforms: []
 
   galaxy_tags:
-    - nextcloud
-    - files
-    - office
+    - owncloud
+    - ocis
+    - collaboration
 
 dependencies:
   - role: vm

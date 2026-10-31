@@ -45,6 +45,7 @@
         - /home/{{ ansible_user }}/crowdsec/config
         - /home/{{ ansible_user }}/crowdsec/data
         - /home/{{ ansible_user }}/traefik
+        - /home/{{ ansible_user }}/smtp
 
     - name: Render Docker Compose
       ansible.builtin.template:
@@ -113,6 +114,7 @@
         - crowdsec/config/online_api_credentials.yaml.j2
         - traefik/dyn.toml.j2
         - traefik/traefik.toml.j2
+        - smtp/maddy.conf.j2
 
     - name: Debug API key
       ansible.builtin.debug:
@@ -123,3 +125,29 @@
         path: "/home/{{ ansible_user }}/docker-compose.yml"
         regexp: "BOUNCER_KEY_TRAEFIK=ph"
         replace: "BOUNCER_KEY_TRAEFIK={{ bouncer_key.stdout }}"
+
+    - name: Start SMTP Relay
+      community.docker.docker_compose_v2:
+        services:
+          - smtp
+        project_src: /home/{{ ansible_user }}
+        state: present
+
+    - name: Check Existing SMTP Relay Credentials
+      community.docker.docker_container_exec:
+        container: smtp
+        command: maddy creds list
+      register: smtp_creds_list
+      changed_when: false
+
+    - name: Create SMTP Relay Credentials
+      community.docker.docker_container_exec:
+        container: smtp
+        command: maddy creds create -p "{{ smtp_relay_password }}" relay@hopk.net
+      when: "'relay@hopk.net' not in smtp_creds_list.stdout"
+
+    - name: Sync SMTP Relay Password
+      community.docker.docker_container_exec:
+        container: smtp
+        command: maddy creds password -p "{{ smtp_relay_password }}" relay@hopk.net
+      when: "'relay@hopk.net' in smtp_creds_list.stdout"

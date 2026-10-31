@@ -60,10 +60,10 @@ infrastructure:
       proxmox_cores: 2
       proxmox_disk_size: 30
       vmid: 102
-    nextcloud:
+    owncloud:
       ansible_host: 10.0.1.23
-      config_dest: /home/nc/nextcloud
-      ansible_user: nc
+      config_dest: /home/oc/owncloud
+      ansible_user: oc
       proxmox_host: virt2
       proxmox_memory: 4096
       proxmox_cores: 2
@@ -123,7 +123,7 @@ docker:
     media1:
     proxy:
     vaultwarden:
-    nextcloud:
+    owncloud:
     budget:
     resume:
     search:
@@ -136,7 +136,7 @@ vms:
     backup:
     proxy:
     vaultwarden:
-    nextcloud:
+    owncloud:
     budget:
     resume:
     search:

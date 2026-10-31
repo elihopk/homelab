@@ -197,20 +197,20 @@
       middlewares = ["chain-authelia"]
       [http.routers.virt-https.tls]
 
-    # NextCloud
-    [http.routers.nc]
-      rule = "Host(`nc.hopk.net`)"
+    # ownCloud Infinite Scale
+    [http.routers.ocis]
+      rule = "Host(`oc.hopk.net`)"
       entryPoints = ["http"]
       middlewares = ["https-redirect"]
-      service = "nc"
-    [http.routers.nc-https]
-      rule = "Host(`nc.hopk.net`)"
+      service = "ocis"
+    [http.routers.ocis-https]
+      rule = "Host(`oc.hopk.net`)"
       entryPoints = ["https"]
-      service = "nc"
+      service = "ocis"
       middlewares = ["crowdsec", "hsts-headers"]
-      [http.routers.nc-https.tls]
+      [http.routers.ocis-https.tls]
 
-    # Collabora
+    # Collabora Online
     [http.routers.office]
       rule = "Host(`office.hopk.net`)"
       entryPoints = ["http"]
@@ -223,19 +223,6 @@
       middlewares = ["crowdsec", "ws-headers"]
       [http.routers.office-https.tls]
 
-    # NextCloud Whiteboard
-    [http.routers.ncwb]
-      rule = "Host(`ncwb.hopk.net`)"
-      entryPoints = ["http"]
-      middlewares = ["https-redirect"]
-      service = "ncwb"
-    [http.routers.ncwb-https]
-      rule = "Host(`ncwb.hopk.net`)"
-      entryPoints = ["https"]
-      service = "ncwb"
-      middlewares = ["crowdsec", "ws-headers"]
-      [http.routers.ncwb-https.tls]
-      
     # Resume
     [http.routers.resume]
       rule = "Host(`resume.hopk.net`)"
@@ -248,19 +235,6 @@
       service = "resume"
       middlewares = ["chain-authelia"]
       [http.routers.resume-https.tls]
-
-    # Resume S3
-    [http.routers.s3]
-      rule = "Host(`s3.hopk.net`)"
-      entryPoints = ["http"]
-      middlewares = ["https-redirect"]
-      service = "s3"
-    [http.routers.s3-https]
-      rule = "Host(`s3.hopk.net`)"
-      entryPoints = ["https"]
-      service = "s3"
-      middlewares = ["chain-authelia"]
-      [http.routers.s3-https.tls]
 
     # Search
     [http.routers.search]
@@ -339,25 +313,17 @@
       [[http.services.virt.loadBalancer.servers]]
         url = "https://{{ hostvars['virt1'].ansible_host }}:8006"
 
-    [http.services.nc.loadBalancer]
-      [[http.services.nc.loadBalancer.servers]]
-        url = "http://{{ hostvars['nextcloud'].ansible_host }}:8081"
+    [http.services.ocis.loadBalancer]
+      [[http.services.ocis.loadBalancer.servers]]
+        url = "http://{{ hostvars['owncloud'].ansible_host }}:9200"
 
     [http.services.office.loadBalancer]
       [[http.services.office.loadBalancer.servers]]
-        url = "https://{{ hostvars['nextcloud'].ansible_host }}:9980"
-
-    [http.services.ncwb.loadBalancer]
-      [[http.services.ncwb.loadBalancer.servers]]
-        url = "http://{{ hostvars['nextcloud'].ansible_host }}:3002"
+        url = "https://{{ hostvars['owncloud'].ansible_host }}:9980"
 
     [http.services.resume.loadBalancer]
       [[http.services.resume.loadBalancer.servers]]
         url = "http://{{ hostvars['resume'].ansible_host }}:3000"
-
-    [http.services.s3.loadBalancer]
-      [[http.services.s3.loadBalancer.servers]]
-        url = "http://{{ hostvars['resume'].ansible_host }}:9000"
 
     [http.services.search.loadBalancer]
       [[http.services.search.loadBalancer.servers]]
