@@ -670,7 +670,9 @@ commands:
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" --exclude redis {{ hostvars['proxy'].ansible_user }}@{{ hostvars['proxy'].ansible_host }}:{{ hostvars['proxy'].config_dest }} /backup/
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" {{ hostvars['vaultwarden'].ansible_user }}@{{ hostvars['vaultwarden'].ansible_host }}:{{ hostvars['vaultwarden'].config_dest }} /backup/
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" {{ hostvars['budget'].ansible_user }}@{{ hostvars['budget'].ansible_host }}:{{ hostvars['budget'].config_dest }} /backup/
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['owncloud'].ansible_user }}@{{ hostvars['owncloud'].ansible_host }} "docker compose -f /home/{{ hostvars['owncloud'].ansible_user }}/docker-compose.yml stop"
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" {{ hostvars['owncloud'].ansible_user }}@{{ hostvars['owncloud'].ansible_host }}:{{ hostvars['owncloud'].config_dest }} /backup/
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['owncloud'].ansible_user }}@{{ hostvars['owncloud'].ansible_host }} "docker compose -f /home/{{ hostvars['owncloud'].ansible_user }}/docker-compose.yml start"
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" {{ hostvars['resume'].ansible_user }}@{{ hostvars['resume'].ansible_host }}:{{ hostvars['resume'].config_dest }} /backup/
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" --exclude cache {{ hostvars['search'].ansible_user }}@{{ hostvars['search'].ansible_host }}:{{ hostvars['search'].config_dest }} /backup/
           - rsync -az -e "ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa" --rsync-path="sudo rsync" {{ hostvars['monitor'].ansible_user }}@{{ hostvars['monitor'].ansible_host }}:{{ hostvars['monitor'].config_dest }} /backup/
@@ -693,6 +695,11 @@ commands:
           - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['media1'].ansible_user }}@{{ hostvars['media1'].ansible_host }} "rm {{ hostvars['media1'].config_dest }}/sabnzbd/config/admin/history1.bak.db"
           - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['budget'].ansible_user }}@{{ hostvars['budget'].ansible_host }} "sudo rm {{ hostvars['budget'].config_dest }}/server-files/account.bak.sqlite"
           - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['budget'].ansible_user }}@{{ hostvars['budget'].ansible_host }} "sudo rm {{ hostvars['budget'].config_dest }}/user-files/group-efefe3b6-25ca-44ea-ae8e-b166973d20b0.bak.sqlite"
+
+    # Don't leave ownCloud down if the backup fails between stop and start.
+    - after: error
+      run:
+          - ssh -o StrictHostKeyChecking=no -i /home/{{ ansible_user }}/.ssh/id_rsa {{ hostvars['owncloud'].ansible_user }}@{{ hostvars['owncloud'].ansible_host }} "docker compose -f /home/{{ hostvars['owncloud'].ansible_user }}/docker-compose.yml start"
 
     - after: everything
       when:
