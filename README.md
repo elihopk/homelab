@@ -16,6 +16,8 @@ A complete, reproducible **homelab** managed via **Ansible**, from hypervisors a
 
 ## Architecture Diagram
 
+The current Proxmox environment has two hosts: `virt1` and `virt2`.
+
 <p align="center">
   <img src="docs/architecture.png" alt="Homelab Architecture" />
 </p>

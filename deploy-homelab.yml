@@ -87,22 +87,6 @@
             cluster_name: "hopk-net"
           when: inventory_hostname == "virt2"
 
-        - name: Wait for Cluster to Settle Again
-          ansible.builtin.pause:
-            seconds: 20
-
-        - name: Join Cluster on virt3
-          community.proxmox.proxmox_cluster:
-            state: present
-            api_host: "{{ ansible_host }}"
-            api_user: root@pam
-            api_password: "{{ proxmox_servers.proxmox_password }}"
-            validate_certs: false
-            master_ip: "{{ hostvars[groups['proxmox_servers'][0]].ansible_host }}"
-            fingerprint: "{{ proxmox_cluster_join.cluster_join.nodelist[0].pve_fp }}"
-            cluster_name: "hopk-net"
-          when: inventory_hostname == "virt3"
-
     - name: Download debian-ci Image
       ansible.builtin.get_url:
         url: https://cdimage.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2
